@@ -1508,7 +1508,7 @@ pub mod negotiation_service_client {
                 .insert(GrpcMethod::new("protos.NegotiationService", "Candidate"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn negotiate(
+        pub async fn connect(
             &mut self,
             request: impl tonic::IntoStreamingRequest<
                 Message = super::NegotiationMessage,
@@ -1527,11 +1527,11 @@ pub mod negotiation_service_client {
                 })?;
             let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/protos.NegotiationService/Negotiate",
+                "/protos.NegotiationService/Connect",
             );
             let mut req = request.into_streaming_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("protos.NegotiationService", "Negotiate"));
+                .insert(GrpcMethod::new("protos.NegotiationService", "Connect"));
             self.inner.streaming(req, path, codec).await
         }
         pub async fn flea_message(
@@ -1594,16 +1594,16 @@ pub mod negotiation_service_server {
             tonic::Response<super::super::google::protobuf::Empty>,
             tonic::Status,
         >;
-        /// Server streaming response type for the Negotiate method.
-        type NegotiateStream: tonic::codegen::tokio_stream::Stream<
+        /// Server streaming response type for the Connect method.
+        type ConnectStream: tonic::codegen::tokio_stream::Stream<
                 Item = std::result::Result<super::NegotiationMessage, tonic::Status>,
             >
             + std::marker::Send
             + 'static;
-        async fn negotiate(
+        async fn connect(
             &self,
             request: tonic::Request<tonic::Streaming<super::NegotiationMessage>>,
-        ) -> std::result::Result<tonic::Response<Self::NegotiateStream>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<Self::ConnectStream>, tonic::Status>;
         async fn flea_message(
             &self,
             request: tonic::Request<super::FleaPacketMessage>,
@@ -1823,15 +1823,15 @@ pub mod negotiation_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/protos.NegotiationService/Negotiate" => {
+                "/protos.NegotiationService/Connect" => {
                     #[allow(non_camel_case_types)]
-                    struct NegotiateSvc<T: NegotiationService>(pub Arc<T>);
+                    struct ConnectSvc<T: NegotiationService>(pub Arc<T>);
                     impl<
                         T: NegotiationService,
                     > tonic::server::StreamingService<super::NegotiationMessage>
-                    for NegotiateSvc<T> {
+                    for ConnectSvc<T> {
                         type Response = super::NegotiationMessage;
-                        type ResponseStream = T::NegotiateStream;
+                        type ResponseStream = T::ConnectStream;
                         type Future = BoxFuture<
                             tonic::Response<Self::ResponseStream>,
                             tonic::Status,
@@ -1844,7 +1844,7 @@ pub mod negotiation_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as NegotiationService>::negotiate(&inner, request).await
+                                <T as NegotiationService>::connect(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1855,7 +1855,7 @@ pub mod negotiation_service_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = NegotiateSvc(inner);
+                        let method = ConnectSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

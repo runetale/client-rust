@@ -827,5 +827,4 @@ impl Transport {
         }
     }
 }
-include!("logserver.tonic.rs");
 // @@protoc_insertion_point(module)

@@ -1852,5 +1852,4 @@ pub struct GetStunTurnConfigResponse {
     #[prost(message, optional, tag = "1")]
     pub rtc_config: ::core::option::Option<RtcConfig>,
 }
-include!("protos.tonic.rs");
 // @@protoc_insertion_point(module)

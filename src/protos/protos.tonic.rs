@@ -85,7 +85,7 @@ pub mod hashi_service_client {
         ///
         pub async fn status(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<tonic::Response<super::HashiStatus>, tonic::Status> {
             self.inner
                 .ready()
@@ -126,7 +126,7 @@ pub mod hashi_service_client {
         ///
         pub async fn login(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<tonic::Response<super::HashiStatus>, tonic::Status> {
             self.inner
                 .ready()
@@ -169,7 +169,7 @@ pub mod hashi_service_client {
         ///
         pub async fn logout(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<tonic::Response<super::HashiStatus>, tonic::Status> {
             self.inner
                 .ready()
@@ -210,7 +210,7 @@ pub mod hashi_service_client {
         ///
         pub async fn dial(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<tonic::Response<super::HashiStatus>, tonic::Status> {
             self.inner
                 .ready()
@@ -229,7 +229,7 @@ pub mod hashi_service_client {
         ///
         pub async fn net_check(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<tonic::Response<super::NetCheckReport>, tonic::Status> {
             self.inner
                 .ready()
@@ -266,7 +266,7 @@ pub mod hashi_service_server {
         ///
         async fn status(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<tonic::Response<super::HashiStatus>, tonic::Status>;
         ///
         async fn ping(
@@ -276,7 +276,7 @@ pub mod hashi_service_server {
         ///
         async fn login(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<tonic::Response<super::HashiStatus>, tonic::Status>;
         ///
         async fn compose(
@@ -286,7 +286,7 @@ pub mod hashi_service_server {
         ///
         async fn logout(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<tonic::Response<super::HashiStatus>, tonic::Status>;
         ///
         async fn stop(
@@ -296,12 +296,12 @@ pub mod hashi_service_server {
         ///
         async fn dial(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<tonic::Response<super::HashiStatus>, tonic::Status>;
         ///
         async fn net_check(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<tonic::Response<super::NetCheckReport>, tonic::Status>;
     }
     /** HashiServiceはRunetale Clientのバックエンド専用のAPI's
@@ -386,21 +386,14 @@ pub mod hashi_service_server {
                 "/protos.HashiService/Status" => {
                     #[allow(non_camel_case_types)]
                     struct StatusSvc<T: HashiService>(pub Arc<T>);
-                    impl<
-                        T: HashiService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: HashiService> tonic::server::UnaryService<()>
                     for StatusSvc<T> {
                         type Response = super::HashiStatus;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as HashiService>::status(&inner, request).await
@@ -476,21 +469,14 @@ pub mod hashi_service_server {
                 "/protos.HashiService/Login" => {
                     #[allow(non_camel_case_types)]
                     struct LoginSvc<T: HashiService>(pub Arc<T>);
-                    impl<
-                        T: HashiService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: HashiService> tonic::server::UnaryService<()>
                     for LoginSvc<T> {
                         type Response = super::HashiStatus;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as HashiService>::login(&inner, request).await
@@ -568,21 +554,14 @@ pub mod hashi_service_server {
                 "/protos.HashiService/Logout" => {
                     #[allow(non_camel_case_types)]
                     struct LogoutSvc<T: HashiService>(pub Arc<T>);
-                    impl<
-                        T: HashiService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: HashiService> tonic::server::UnaryService<()>
                     for LogoutSvc<T> {
                         type Response = super::HashiStatus;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as HashiService>::logout(&inner, request).await
@@ -658,21 +637,14 @@ pub mod hashi_service_server {
                 "/protos.HashiService/Dial" => {
                     #[allow(non_camel_case_types)]
                     struct DialSvc<T: HashiService>(pub Arc<T>);
-                    impl<
-                        T: HashiService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: HashiService> tonic::server::UnaryService<()>
                     for DialSvc<T> {
                         type Response = super::HashiStatus;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as HashiService>::dial(&inner, request).await
@@ -705,21 +677,14 @@ pub mod hashi_service_server {
                 "/protos.HashiService/NetCheck" => {
                     #[allow(non_camel_case_types)]
                     struct NetCheckSvc<T: HashiService>(pub Arc<T>);
-                    impl<
-                        T: HashiService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: HashiService> tonic::server::UnaryService<()>
                     for NetCheckSvc<T> {
                         type Response = super::NetCheckReport;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as HashiService>::net_check(&inner, request).await
@@ -871,7 +836,7 @@ pub mod login_service_client {
         }
         pub async fn login_node(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<
             tonic::Response<super::LoginNodeResponse>,
             tonic::Status,
@@ -895,11 +860,8 @@ pub mod login_service_client {
         }
         pub async fn logout(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        > {
+            request: impl tonic::IntoRequest<()>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -919,9 +881,7 @@ pub mod login_service_client {
         }
         pub async fn login_session(
             &mut self,
-            request: impl tonic::IntoStreamingRequest<
-                Message = super::super::google::protobuf::Empty,
-            >,
+            request: impl tonic::IntoStreamingRequest<Message = ()>,
         ) -> std::result::Result<
             tonic::Response<tonic::codec::Streaming<super::LoginSessionResponse>>,
             tonic::Status,
@@ -984,18 +944,15 @@ pub mod login_service_server {
     pub trait LoginService: std::marker::Send + std::marker::Sync + 'static {
         async fn login_node(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<
             tonic::Response<super::LoginNodeResponse>,
             tonic::Status,
         >;
         async fn logout(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        >;
+            request: tonic::Request<()>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
         /// Server streaming response type for the LoginSession method.
         type LoginSessionStream: tonic::codegen::tokio_stream::Stream<
                 Item = std::result::Result<super::LoginSessionResponse, tonic::Status>,
@@ -1004,9 +961,7 @@ pub mod login_service_server {
             + 'static;
         async fn login_session(
             &self,
-            request: tonic::Request<
-                tonic::Streaming<super::super::google::protobuf::Empty>,
-            >,
+            request: tonic::Request<tonic::Streaming<()>>,
         ) -> std::result::Result<
             tonic::Response<Self::LoginSessionStream>,
             tonic::Status,
@@ -1098,21 +1053,14 @@ pub mod login_service_server {
                 "/protos.LoginService/LoginNode" => {
                     #[allow(non_camel_case_types)]
                     struct LoginNodeSvc<T: LoginService>(pub Arc<T>);
-                    impl<
-                        T: LoginService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: LoginService> tonic::server::UnaryService<()>
                     for LoginNodeSvc<T> {
                         type Response = super::LoginNodeResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as LoginService>::login_node(&inner, request).await
@@ -1145,21 +1093,14 @@ pub mod login_service_server {
                 "/protos.LoginService/Logout" => {
                     #[allow(non_camel_case_types)]
                     struct LogoutSvc<T: LoginService>(pub Arc<T>);
-                    impl<
-                        T: LoginService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: LoginService> tonic::server::UnaryService<()>
                     for LogoutSvc<T> {
-                        type Response = super::super::google::protobuf::Empty;
+                        type Response = ();
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as LoginService>::logout(&inner, request).await
@@ -1192,11 +1133,8 @@ pub mod login_service_server {
                 "/protos.LoginService/LoginSession" => {
                     #[allow(non_camel_case_types)]
                     struct LoginSessionSvc<T: LoginService>(pub Arc<T>);
-                    impl<
-                        T: LoginService,
-                    > tonic::server::StreamingService<
-                        super::super::google::protobuf::Empty,
-                    > for LoginSessionSvc<T> {
+                    impl<T: LoginService> tonic::server::StreamingService<()>
+                    for LoginSessionSvc<T> {
                         type Response = super::LoginSessionResponse;
                         type ResponseStream = T::LoginSessionStream;
                         type Future = BoxFuture<
@@ -1205,9 +1143,7 @@ pub mod login_service_server {
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                tonic::Streaming<super::super::google::protobuf::Empty>,
-                            >,
+                            request: tonic::Request<tonic::Streaming<()>>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
@@ -1406,10 +1342,7 @@ pub mod negotiation_service_client {
         pub async fn offer(
             &mut self,
             request: impl tonic::IntoRequest<super::HandshakeRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        > {
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -1430,10 +1363,7 @@ pub mod negotiation_service_client {
         pub async fn answer(
             &mut self,
             request: impl tonic::IntoRequest<super::HandshakeRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        > {
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -1454,10 +1384,7 @@ pub mod negotiation_service_client {
         pub async fn candidate(
             &mut self,
             request: impl tonic::IntoRequest<super::CandidateRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        > {
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -1504,10 +1431,7 @@ pub mod negotiation_service_client {
         pub async fn flea_message(
             &mut self,
             request: impl tonic::IntoRequest<super::FleaPacketMessage>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        > {
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -1543,24 +1467,15 @@ pub mod negotiation_service_server {
         async fn offer(
             &self,
             request: tonic::Request<super::HandshakeRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
         async fn answer(
             &self,
             request: tonic::Request<super::HandshakeRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
         async fn candidate(
             &self,
             request: tonic::Request<super::CandidateRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
         /// Server streaming response type for the Connect method.
         type ConnectStream: tonic::codegen::tokio_stream::Stream<
                 Item = std::result::Result<super::NegotiationMessage, tonic::Status>,
@@ -1574,10 +1489,7 @@ pub mod negotiation_service_server {
         async fn flea_message(
             &self,
             request: tonic::Request<super::FleaPacketMessage>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct NegotiationServiceServer<T> {
@@ -1662,7 +1574,7 @@ pub mod negotiation_service_server {
                         T: NegotiationService,
                     > tonic::server::UnaryService<super::HandshakeRequest>
                     for OfferSvc<T> {
-                        type Response = super::super::google::protobuf::Empty;
+                        type Response = ();
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
@@ -1707,7 +1619,7 @@ pub mod negotiation_service_server {
                         T: NegotiationService,
                     > tonic::server::UnaryService<super::HandshakeRequest>
                     for AnswerSvc<T> {
-                        type Response = super::super::google::protobuf::Empty;
+                        type Response = ();
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
@@ -1752,7 +1664,7 @@ pub mod negotiation_service_server {
                         T: NegotiationService,
                     > tonic::server::UnaryService<super::CandidateRequest>
                     for CandidateSvc<T> {
-                        type Response = super::super::google::protobuf::Empty;
+                        type Response = ();
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
@@ -1845,7 +1757,7 @@ pub mod negotiation_service_server {
                         T: NegotiationService,
                     > tonic::server::UnaryService<super::FleaPacketMessage>
                     for FleaMessageSvc<T> {
-                        type Response = super::super::google::protobuf::Empty;
+                        type Response = ();
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
@@ -2006,7 +1918,7 @@ pub mod node_service_client {
         }
         pub async fn compose_node(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<
             tonic::Response<super::ComposeNodeResponse>,
             tonic::Status,
@@ -2030,7 +1942,7 @@ pub mod node_service_client {
         }
         pub async fn get_network_map(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<
             tonic::Response<super::NetworkMapResponse>,
             tonic::Status,
@@ -2174,7 +2086,7 @@ pub mod node_service_client {
         }
         pub async fn network_lock_status(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<
             tonic::Response<super::NetworkLockStatusResponse>,
             tonic::Status,
@@ -2213,14 +2125,14 @@ pub mod node_service_server {
     pub trait NodeService: std::marker::Send + std::marker::Sync + 'static {
         async fn compose_node(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<
             tonic::Response<super::ComposeNodeResponse>,
             tonic::Status,
         >;
         async fn get_network_map(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<
             tonic::Response<super::NetworkMapResponse>,
             tonic::Status,
@@ -2268,7 +2180,7 @@ pub mod node_service_server {
         >;
         async fn network_lock_status(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<
             tonic::Response<super::NetworkLockStatusResponse>,
             tonic::Status,
@@ -2353,21 +2265,14 @@ pub mod node_service_server {
                 "/protos.NodeService/ComposeNode" => {
                     #[allow(non_camel_case_types)]
                     struct ComposeNodeSvc<T: NodeService>(pub Arc<T>);
-                    impl<
-                        T: NodeService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: NodeService> tonic::server::UnaryService<()>
                     for ComposeNodeSvc<T> {
                         type Response = super::ComposeNodeResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as NodeService>::compose_node(&inner, request).await
@@ -2400,21 +2305,14 @@ pub mod node_service_server {
                 "/protos.NodeService/GetNetworkMap" => {
                     #[allow(non_camel_case_types)]
                     struct GetNetworkMapSvc<T: NodeService>(pub Arc<T>);
-                    impl<
-                        T: NodeService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: NodeService> tonic::server::UnaryService<()>
                     for GetNetworkMapSvc<T> {
                         type Response = super::NetworkMapResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as NodeService>::get_network_map(&inner, request).await
@@ -2680,21 +2578,14 @@ pub mod node_service_server {
                 "/protos.NodeService/NetworkLockStatus" => {
                     #[allow(non_camel_case_types)]
                     struct NetworkLockStatusSvc<T: NodeService>(pub Arc<T>);
-                    impl<
-                        T: NodeService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: NodeService> tonic::server::UnaryService<()>
                     for NetworkLockStatusSvc<T> {
                         type Response = super::NetworkLockStatusResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as NodeService>::network_lock_status(&inner, request)
@@ -2865,7 +2756,7 @@ pub mod oidc_service_client {
         }
         pub async fn authenticate(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<
             tonic::Response<super::AuthenticateResponse>,
             tonic::Status,
@@ -2908,7 +2799,7 @@ pub mod oidc_service_server {
         ) -> std::result::Result<tonic::Response<super::LoginResponse>, tonic::Status>;
         async fn authenticate(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<
             tonic::Response<super::AuthenticateResponse>,
             tonic::Status,
@@ -3036,21 +2927,14 @@ pub mod oidc_service_server {
                 "/protos.OIDCService/Authenticate" => {
                     #[allow(non_camel_case_types)]
                     struct AuthenticateSvc<T: OidcService>(pub Arc<T>);
-                    impl<
-                        T: OidcService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: OidcService> tonic::server::UnaryService<()>
                     for AuthenticateSvc<T> {
                         type Response = super::AuthenticateResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as OidcService>::authenticate(&inner, request).await
@@ -3643,7 +3527,7 @@ pub mod ping_service_client {
         }
         pub async fn ping(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<tonic::Response<super::PingResponse>, tonic::Status> {
             self.inner
                 .ready()
@@ -3676,7 +3560,7 @@ pub mod ping_service_server {
     pub trait PingService: std::marker::Send + std::marker::Sync + 'static {
         async fn ping(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<tonic::Response<super::PingResponse>, tonic::Status>;
     }
     #[derive(Debug)]
@@ -3758,21 +3642,13 @@ pub mod ping_service_server {
                 "/protos.PingService/Ping" => {
                     #[allow(non_camel_case_types)]
                     struct PingSvc<T: PingService>(pub Arc<T>);
-                    impl<
-                        T: PingService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
-                    for PingSvc<T> {
+                    impl<T: PingService> tonic::server::UnaryService<()> for PingSvc<T> {
                         type Response = super::PingResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as PingService>::ping(&inner, request).await
@@ -3924,7 +3800,7 @@ pub mod rtc_service_client {
         }
         pub async fn get_stun_turn_config(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
+            request: impl tonic::IntoRequest<()>,
         ) -> std::result::Result<
             tonic::Response<super::GetStunTurnConfigResponse>,
             tonic::Status,
@@ -3963,7 +3839,7 @@ pub mod rtc_service_server {
     pub trait RtcService: std::marker::Send + std::marker::Sync + 'static {
         async fn get_stun_turn_config(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
+            request: tonic::Request<()>,
         ) -> std::result::Result<
             tonic::Response<super::GetStunTurnConfigResponse>,
             tonic::Status,
@@ -4048,21 +3924,14 @@ pub mod rtc_service_server {
                 "/protos.RtcService/GetStunTurnConfig" => {
                     #[allow(non_camel_case_types)]
                     struct GetStunTurnConfigSvc<T: RtcService>(pub Arc<T>);
-                    impl<
-                        T: RtcService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: RtcService> tonic::server::UnaryService<()>
                     for GetStunTurnConfigSvc<T> {
                         type Response = super::GetStunTurnConfigResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as RtcService>::get_stun_turn_config(&inner, request)
@@ -4217,11 +4086,8 @@ pub mod token_service_client {
         ///
         pub async fn refresh_token(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::google::protobuf::Empty>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        > {
+            request: impl tonic::IntoRequest<()>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -4257,11 +4123,8 @@ pub mod token_service_server {
         ///
         async fn refresh_token(
             &self,
-            request: tonic::Request<super::super::google::protobuf::Empty>,
-        ) -> std::result::Result<
-            tonic::Response<super::super::google::protobuf::Empty>,
-            tonic::Status,
-        >;
+            request: tonic::Request<()>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
     }
     ///
     #[derive(Debug)]
@@ -4343,21 +4206,14 @@ pub mod token_service_server {
                 "/protos.TokenService/RefreshToken" => {
                     #[allow(non_camel_case_types)]
                     struct RefreshTokenSvc<T: TokenService>(pub Arc<T>);
-                    impl<
-                        T: TokenService,
-                    > tonic::server::UnaryService<super::super::google::protobuf::Empty>
+                    impl<T: TokenService> tonic::server::UnaryService<()>
                     for RefreshTokenSvc<T> {
-                        type Response = super::super::google::protobuf::Empty;
+                        type Response = ();
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::google::protobuf::Empty,
-                            >,
-                        ) -> Self::Future {
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as TokenService>::refresh_token(&inner, request).await

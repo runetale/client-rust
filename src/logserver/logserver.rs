@@ -12,10 +12,10 @@ pub struct GetLoglyphRequest {
     pub log_stream_id: ::prost::alloc::string::String,
     /// from is the start of the time range (inclusive).
     #[prost(message, optional, tag = "2")]
-    pub from: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub from: ::core::option::Option<::prost_types::Timestamp>,
     /// to is the end of the time range (exclusive).
     #[prost(message, optional, tag = "3")]
-    pub to: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub to: ::core::option::Option<::prost_types::Timestamp>,
     /// limit is the maximum number of entries to return.
     #[prost(int32, tag = "4")]
     pub limit: i32,
@@ -55,9 +55,9 @@ pub struct StoredLoglyphEntry {
     #[prost(string, tag = "4")]
     pub client_version: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "5")]
-    pub client_time: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub client_time: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "6")]
-    pub received_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub received_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(string, tag = "7")]
     pub level: ::prost::alloc::string::String,
     #[prost(string, tag = "8")]
@@ -65,7 +65,7 @@ pub struct StoredLoglyphEntry {
     #[prost(string, tag = "9")]
     pub payload: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "10")]
-    pub created_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
     /// telemetry_log_id is the server-provided node-level ID for admin correlation.
     #[prost(string, tag = "11")]
     pub telemetry_log_id: ::prost::alloc::string::String,
@@ -85,10 +85,10 @@ pub struct GetOrbitEventsRequest {
     pub session_id: ::prost::alloc::string::String,
     /// from is the start of the time range (inclusive).
     #[prost(message, optional, tag = "3")]
-    pub from: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub from: ::core::option::Option<::prost_types::Timestamp>,
     /// to is the end of the time range (exclusive).
     #[prost(message, optional, tag = "4")]
-    pub to: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub to: ::core::option::Option<::prost_types::Timestamp>,
     /// limit is the maximum number of events to return.
     #[prost(int32, tag = "5")]
     pub limit: i32,
@@ -125,11 +125,11 @@ pub struct StoredOrbitEvent {
     #[prost(string, tag = "4")]
     pub client_version: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "5")]
-    pub received_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub received_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "6")]
-    pub event_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub event_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "7")]
-    pub event_day: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub event_day: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(bytes = "vec", tag = "8")]
     pub peer_hash: ::prost::alloc::vec::Vec<u8>,
     #[prost(uint32, tag = "9")]
@@ -142,7 +142,7 @@ pub struct StoredOrbitEvent {
     #[prost(string, tag = "12")]
     pub payload: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "13")]
-    pub created_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
     /// telemetry_log_id is the server-provided node-level ID for admin correlation.
     #[prost(string, tag = "14")]
     pub telemetry_log_id: ::prost::alloc::string::String,
@@ -158,10 +158,10 @@ pub struct GetOrbitDailyCountsRequest {
     pub metric: ::prost::alloc::string::String,
     /// from is the start of the time range (inclusive).
     #[prost(message, optional, tag = "3")]
-    pub from: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub from: ::core::option::Option<::prost_types::Timestamp>,
     /// to is the end of the time range (exclusive).
     #[prost(message, optional, tag = "4")]
-    pub to: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub to: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// GetOrbitDailyCountsResponse contains the aggregated counts.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -174,7 +174,7 @@ pub struct GetOrbitDailyCountsResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DailyCount {
     #[prost(message, optional, tag = "1")]
-    pub day: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub day: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(string, tag = "2")]
     pub log_stream_id: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
@@ -184,9 +184,9 @@ pub struct DailyCount {
     #[prost(int64, tag = "5")]
     pub count: i64,
     #[prost(message, optional, tag = "6")]
-    pub created_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "7")]
-    pub updated_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 // =============================================================================
 // PacketFlowLog queries
@@ -200,10 +200,10 @@ pub struct GetPacketFlowLogsRequest {
     pub log_stream_id: ::prost::alloc::string::String,
     /// from is the start of the time range (inclusive).
     #[prost(message, optional, tag = "2")]
-    pub from: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub from: ::core::option::Option<::prost_types::Timestamp>,
     /// to is the end of the time range (exclusive).
     #[prost(message, optional, tag = "3")]
-    pub to: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub to: ::core::option::Option<::prost_types::Timestamp>,
     /// limit is the maximum number of records to return.
     #[prost(int32, tag = "4")]
     pub limit: i32,
@@ -258,13 +258,13 @@ pub struct StoredPacketFlowLog {
     #[prost(uint64, tag = "10")]
     pub rx_bytes: u64,
     #[prost(message, optional, tag = "11")]
-    pub started_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub started_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "12")]
-    pub ended_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub ended_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "13")]
-    pub logged_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub logged_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "14")]
-    pub created_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
     /// domain_telemetry_log_id is the server-provided tenant-level ID for admin correlation.
     #[prost(string, tag = "15")]
     pub domain_telemetry_log_id: ::prost::alloc::string::String,
@@ -315,7 +315,7 @@ pub struct LoglyphUploadRequest {
 pub struct LoglyphEntry {
     /// client_time is when the log was generated on the client (RFC3339Nano).
     #[prost(message, optional, tag = "1")]
-    pub client_time: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub client_time: ::core::option::Option<::prost_types::Timestamp>,
     /// level is the log level (e.g., "info", "debug", "warn", "error").
     #[prost(string, tag = "2")]
     pub level: ::prost::alloc::string::String,
@@ -387,7 +387,7 @@ pub struct OrbitBatchUploadResponse {
 pub struct OrbitEvent {
     /// at is the client-side timestamp when the event occurred.
     #[prost(message, optional, tag = "1")]
-    pub at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub at: ::core::option::Option<::prost_types::Timestamp>,
     /// peer_hash is the first 8 bytes of SHA256(peer_public_key).
     /// Used for correlation without exposing full keys.
     #[prost(bytes = "vec", tag = "2")]

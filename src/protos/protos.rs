@@ -663,9 +663,9 @@ pub struct PeerStatus {
     #[prost(int64, tag = "9")]
     pub tx_bytes: i64,
     #[prost(message, optional, tag = "10")]
-    pub last_handshake: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub last_handshake: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "11")]
-    pub last_write: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub last_write: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(string, repeated, tag = "12")]
     pub addrs: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(string, optional, tag = "13")]
@@ -685,12 +685,12 @@ pub struct PeerStatus {
     pub online: bool,
     /// last_seen: 最後にオンラインだった時刻（オフライン時のみ設定）
     #[prost(message, optional, tag = "19")]
-    pub last_seen: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub last_seen: ::core::option::Option<::prost_types::Timestamp>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UserspacePeerEngineStatus {
     #[prost(message, optional, tag = "1")]
-    pub got_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub got_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, repeated, tag = "2")]
     pub peers: ::prost::alloc::vec::Vec<CompactPeerStatus>,
     /// \[\]*runecfg.Endpoint
@@ -706,7 +706,7 @@ pub struct CompactPeerStatus {
     #[prost(int64, tag = "3")]
     pub rx_bytes: i64,
     #[prost(message, optional, tag = "4")]
-    pub last_handshake: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub last_handshake: ::core::option::Option<::prost_types::Timestamp>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PingResult {
@@ -751,7 +751,7 @@ pub struct StopRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NetCheckReport {
     #[prost(message, optional, tag = "1")]
-    pub now: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub now: ::core::option::Option<::prost_types::Timestamp>,
     /// a UDP STUN round trip completed
     #[prost(bool, tag = "2")]
     pub udp: bool,
@@ -993,11 +993,11 @@ pub struct Node {
     pub online: bool,
     /// lastSeen is when the node was last online (only set when offline)
     #[prost(message, optional, tag = "15")]
-    pub last_seen: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub last_seen: ::core::option::Option<::prost_types::Timestamp>,
     /// keyExpiry is when this node's key expires. Zero value means no expiry.
     /// After this time, the node must re-authenticate to continue using the network.
     #[prost(message, optional, tag = "16")]
-    pub key_expiry: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub key_expiry: ::core::option::Option<::prost_types::Timestamp>,
     /// expired indicates whether the server has marked this node's key as expired.
     /// When true, the node should initiate key rotation or re-authentication.
     #[prost(bool, tag = "17")]
@@ -1147,7 +1147,7 @@ pub struct NetworkMapResponse {
     /// The client uses this to detect clock skew between local and server time,
     /// which is critical for accurate key expiry evaluation.
     #[prost(message, optional, tag = "25")]
-    pub server_time: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub server_time: ::core::option::Option<::prost_types::Timestamp>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CerfMap {
@@ -1280,7 +1280,7 @@ pub struct RotateWgKeyResponse {
     pub success: bool,
     /// newKeyExpiry is the new expiry time for the rotated key
     #[prost(message, optional, tag = "2")]
-    pub new_key_expiry: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub new_key_expiry: ::core::option::Option<::prost_types::Timestamp>,
     /// error is set if success is false
     #[prost(string, tag = "3")]
     pub error: ::prost::alloc::string::String,
@@ -1488,7 +1488,7 @@ pub struct OrbitBatchResponse {
 pub struct OrbitEvent {
     /// at is the client-side timestamp when the event occurred.
     #[prost(message, optional, tag = "1")]
-    pub at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub at: ::core::option::Option<::prost_types::Timestamp>,
     /// peer_hash is the first 8 bytes of SHA256(peer_public_key).
     /// Used for correlation without exposing full keys.
     #[prost(bytes = "vec", tag = "2")]
@@ -1698,9 +1698,9 @@ pub struct GetEventsRequest {
     #[prost(string, tag = "2")]
     pub session_id: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "3")]
-    pub from: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub from: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "4")]
-    pub to: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub to: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(int32, tag = "5")]
     pub limit: i32,
     #[prost(int32, tag = "6")]
@@ -1726,11 +1726,11 @@ pub struct StoredOrbitEvent {
     #[prost(string, tag = "4")]
     pub client_version: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "5")]
-    pub received_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub received_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "6")]
-    pub event_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub event_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "7")]
-    pub event_day: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub event_day: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(bytes = "vec", tag = "8")]
     pub peer_hash: ::prost::alloc::vec::Vec<u8>,
     #[prost(uint32, tag = "9")]
@@ -1743,7 +1743,7 @@ pub struct StoredOrbitEvent {
     #[prost(string, tag = "12")]
     pub payload: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "13")]
-    pub created_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// GetDailyCountsRequest is used to retrieve aggregated daily counts.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1753,9 +1753,9 @@ pub struct GetDailyCountsRequest {
     #[prost(string, tag = "2")]
     pub metric: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "3")]
-    pub from: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub from: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "4")]
-    pub to: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub to: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// GetDailyCountsResponse contains the aggregated counts.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1767,7 +1767,7 @@ pub struct GetDailyCountsResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DailyCount {
     #[prost(message, optional, tag = "1")]
-    pub day: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub day: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(uint64, tag = "2")]
     pub node_id: u64,
     #[prost(string, tag = "3")]
@@ -1777,9 +1777,9 @@ pub struct DailyCount {
     #[prost(int64, tag = "5")]
     pub count: i64,
     #[prost(message, optional, tag = "6")]
-    pub created_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "7")]
-    pub updated_at: ::core::option::Option<super::google::protobuf::Timestamp>,
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// Transport describes how a packet was sent/received.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]

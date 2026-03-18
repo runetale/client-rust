@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "gRPC-Rust client library for Runetale"
 license = "BSD-3-Clause"
-repository = "https://github.com/runetale/client-rs"
+repository = "https://github.com/runetale/client-rust"
 
 [dependencies]
 tonic = "0.12"

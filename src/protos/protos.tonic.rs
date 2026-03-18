@@ -17,17 +17,6 @@ pub mod hashi_service_client {
     pub struct HashiServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl HashiServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
-    }
     impl<T> HashiServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
@@ -815,17 +804,6 @@ pub mod login_service_client {
     pub struct LoginServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl LoginServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
-    }
     impl<T> LoginServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
@@ -1359,17 +1337,6 @@ pub mod negotiation_service_client {
     #[derive(Debug, Clone)]
     pub struct NegotiationServiceClient<T> {
         inner: tonic::client::Grpc<T>,
-    }
-    impl NegotiationServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
     }
     impl<T> NegotiationServiceClient<T>
     where
@@ -1971,17 +1938,6 @@ pub mod node_service_client {
     #[derive(Debug, Clone)]
     pub struct NodeServiceClient<T> {
         inner: tonic::client::Grpc<T>,
-    }
-    impl NodeServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
     }
     impl<T> NodeServiceClient<T>
     where
@@ -2824,17 +2780,6 @@ pub mod oidc_service_client {
     pub struct OidcServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl OidcServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
-    }
     impl<T> OidcServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
@@ -3189,17 +3134,6 @@ pub mod orbit_service_client {
     #[derive(Debug, Clone)]
     pub struct OrbitServiceClient<T> {
         inner: tonic::client::Grpc<T>,
-    }
-    impl OrbitServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
     }
     impl<T> OrbitServiceClient<T>
     where
@@ -3642,17 +3576,6 @@ pub mod ping_service_client {
     pub struct PingServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl PingServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
-    }
     impl<T> PingServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
@@ -3933,17 +3856,6 @@ pub mod rtc_service_client {
     #[derive(Debug, Clone)]
     pub struct RtcServiceClient<T> {
         inner: tonic::client::Grpc<T>,
-    }
-    impl RtcServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
     }
     impl<T> RtcServiceClient<T>
     where
@@ -4236,17 +4148,6 @@ pub mod token_service_client {
     #[derive(Debug, Clone)]
     pub struct TokenServiceClient<T> {
         inner: tonic::client::Grpc<T>,
-    }
-    impl TokenServiceClient<tonic::transport::Channel> {
-        /// Attempt to create a new client by connecting to a given endpoint.
-        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
-        where
-            D: TryInto<tonic::transport::Endpoint>,
-            D::Error: Into<StdError>,
-        {
-            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
-            Ok(Self::new(conn))
-        }
     }
     impl<T> TokenServiceClient<T>
     where

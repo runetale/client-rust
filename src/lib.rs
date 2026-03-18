@@ -1,6 +1,6 @@
 pub mod google {
     pub mod protobuf {
-        include!("google/google.protobuf.rs");
+        pub use prost_types::*;
     }
 }
 

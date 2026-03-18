@@ -7,6 +7,6 @@ license = "BSD-3-Clause"
 repository = "https://github.com/runetale/client-rust"
 
 [dependencies]
-tonic = "0.12"
-prost = "0.13"
-prost-types = "0.13"
+tonic = "0.14"
+prost = "0.14"
+prost-types = "0.14"

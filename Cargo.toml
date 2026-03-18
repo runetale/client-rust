@@ -1,0 +1,12 @@
+[package]
+name = "runetale-client"
+version = "0.1.0"
+edition = "2021"
+description = "gRPC-Rust client library for Runetale"
+license = "BSD-3-Clause"
+repository = "https://github.com/runetale/client-rs"
+
+[dependencies]
+tonic = "0.12"
+prost = "0.13"
+prost-types = "0.13"

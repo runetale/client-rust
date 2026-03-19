@@ -1528,6 +1528,433 @@ pub struct SshRecorderFailureAction {
     #[prost(string, tag = "2")]
     pub terminate_session_with_message: ::prost::alloc::string::String,
 }
+/// SSHSession represents a managed SSH session that can be resumed/shared/published.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SshSession {
+    /// session_id is the unique identifier for this session
+    #[prost(string, tag = "1")]
+    pub session_id: ::prost::alloc::string::String,
+    /// node_id is the node where the SSH server is running
+    #[prost(uint64, tag = "2")]
+    pub node_id: u64,
+    /// owner_user_id is the user who created the session
+    #[prost(uint64, tag = "3")]
+    pub owner_user_id: u64,
+    /// state is the current session state
+    #[prost(enumeration = "SshSessionState", tag = "4")]
+    pub state: i32,
+    /// created_at is when the session was created (Unix timestamp)
+    #[prost(int64, tag = "5")]
+    pub created_at: i64,
+    /// last_active_at is when the session was last active (Unix timestamp)
+    #[prost(int64, tag = "6")]
+    pub last_active_at: i64,
+    /// expires_at is when the session expires (Unix timestamp, 0 = no expiry)
+    #[prost(int64, tag = "7")]
+    pub expires_at: i64,
+    /// local_user is the local Unix user for the session
+    #[prost(string, tag = "8")]
+    pub local_user: ::prost::alloc::string::String,
+    /// remote_user is the connecting user's login
+    #[prost(string, tag = "9")]
+    pub remote_user: ::prost::alloc::string::String,
+    /// remote_node_id is the node the user connected from
+    #[prost(uint64, tag = "10")]
+    pub remote_node_id: u64,
+    /// share_token is the token for sharing this session (if shared)
+    #[prost(string, tag = "11")]
+    pub share_token: ::prost::alloc::string::String,
+    /// publish_slug is the URL slug for publishing (if published)
+    #[prost(string, tag = "12")]
+    pub publish_slug: ::prost::alloc::string::String,
+    /// publish_visibility is the visibility level when published
+    #[prost(enumeration = "SshSessionVisibility", tag = "13")]
+    pub publish_visibility: i32,
+    /// acl is the access control list for this session
+    #[prost(message, repeated, tag = "14")]
+    pub acl: ::prost::alloc::vec::Vec<SshSessionAclEntry>,
+    /// terminal_cols is the terminal width
+    #[prost(uint32, tag = "15")]
+    pub terminal_cols: u32,
+    /// terminal_rows is the terminal height
+    #[prost(uint32, tag = "16")]
+    pub terminal_rows: u32,
+}
+/// SSHSessionACLEntry represents an access control entry for a session.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SshSessionAclEntry {
+    /// entry_id is the unique identifier for this ACL entry
+    #[prost(string, tag = "1")]
+    pub entry_id: ::prost::alloc::string::String,
+    /// user_id is the user this entry applies to (0 for group-based)
+    #[prost(uint64, tag = "2")]
+    pub user_id: u64,
+    /// group_id is the group this entry applies to (empty for user-based)
+    #[prost(string, tag = "3")]
+    pub group_id: ::prost::alloc::string::String,
+    /// role is the role granted by this entry
+    #[prost(enumeration = "SshSessionRole", tag = "4")]
+    pub role: i32,
+    /// granted_at is when this entry was created (Unix timestamp)
+    #[prost(int64, tag = "5")]
+    pub granted_at: i64,
+    /// granted_by is the user who created this entry
+    #[prost(uint64, tag = "6")]
+    pub granted_by: u64,
+    /// expires_at is when this entry expires (Unix timestamp, 0 = no expiry)
+    #[prost(int64, tag = "7")]
+    pub expires_at: i64,
+}
+/// SSHSessionEvent represents an event in a session's lifecycle.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SshSessionEvent {
+    /// session_id is the session this event belongs to
+    #[prost(string, tag = "1")]
+    pub session_id: ::prost::alloc::string::String,
+    /// event_type is the type of event
+    #[prost(enumeration = "SshSessionEventType", tag = "2")]
+    pub event_type: i32,
+    /// timestamp is when the event occurred (Unix timestamp)
+    #[prost(int64, tag = "3")]
+    pub timestamp: i64,
+    /// actor_user_id is the user who triggered the event
+    #[prost(uint64, tag = "4")]
+    pub actor_user_id: u64,
+    /// details contains event-specific information
+    #[prost(string, tag = "5")]
+    pub details: ::prost::alloc::string::String,
+}
+/// RegisterSessionRequest is sent when a new SSH session starts.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RegisterSessionRequest {
+    /// local_user is the local Unix user for the session
+    #[prost(string, tag = "1")]
+    pub local_user: ::prost::alloc::string::String,
+    /// remote_user is the connecting user's login
+    #[prost(string, tag = "2")]
+    pub remote_user: ::prost::alloc::string::String,
+    /// remote_node_id is the node the user connected from
+    #[prost(uint64, tag = "3")]
+    pub remote_node_id: u64,
+    /// terminal_cols is the initial terminal width
+    #[prost(uint32, tag = "4")]
+    pub terminal_cols: u32,
+    /// terminal_rows is the initial terminal height
+    #[prost(uint32, tag = "5")]
+    pub terminal_rows: u32,
+}
+/// RegisterSessionResponse is returned after registering a session.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RegisterSessionResponse {
+    /// session_id is the assigned session ID
+    #[prost(string, tag = "1")]
+    pub session_id: ::prost::alloc::string::String,
+    /// error is set if registration failed
+    #[prost(string, tag = "2")]
+    pub error: ::prost::alloc::string::String,
+}
+/// UpdateSessionStateRequest updates a session's state.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateSessionStateRequest {
+    /// session_id is the session to update
+    #[prost(string, tag = "1")]
+    pub session_id: ::prost::alloc::string::String,
+    /// new_state is the new state
+    #[prost(enumeration = "SshSessionState", tag = "2")]
+    pub new_state: i32,
+}
+/// UpdateSessionStateResponse is returned after updating session state.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateSessionStateResponse {
+    /// success indicates whether the update was successful
+    #[prost(bool, tag = "1")]
+    pub success: bool,
+    /// error is set if the update failed
+    #[prost(string, tag = "2")]
+    pub error: ::prost::alloc::string::String,
+}
+/// GetSessionRequest retrieves a session by ID.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetSessionRequest {
+    /// session_id is the session to retrieve
+    #[prost(string, tag = "1")]
+    pub session_id: ::prost::alloc::string::String,
+}
+/// GetSessionResponse returns the requested session.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetSessionResponse {
+    /// session is the requested session
+    #[prost(message, optional, tag = "1")]
+    pub session: ::core::option::Option<SshSession>,
+    /// error is set if retrieval failed
+    #[prost(string, tag = "2")]
+    pub error: ::prost::alloc::string::String,
+}
+/// ListSessionsRequest lists sessions for the current node.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListSessionsRequest {
+    /// include_terminated includes terminated sessions
+    #[prost(bool, tag = "1")]
+    pub include_terminated: bool,
+}
+/// ListSessionsResponse returns the list of sessions.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListSessionsResponse {
+    /// sessions is the list of sessions
+    #[prost(message, repeated, tag = "1")]
+    pub sessions: ::prost::alloc::vec::Vec<SshSession>,
+}
+/// ResumeSessionRequest requests to resume a suspended session.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ResumeSessionRequest {
+    /// session_id is the session to resume
+    #[prost(string, tag = "1")]
+    pub session_id: ::prost::alloc::string::String,
+}
+/// ResumeSessionResponse is returned after attempting to resume.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ResumeSessionResponse {
+    /// success indicates whether resume was successful
+    #[prost(bool, tag = "1")]
+    pub success: bool,
+    /// scrollback is the terminal scrollback buffer to restore
+    #[prost(bytes = "vec", tag = "2")]
+    pub scrollback: ::prost::alloc::vec::Vec<u8>,
+    /// error is set if resume failed
+    #[prost(string, tag = "3")]
+    pub error: ::prost::alloc::string::String,
+}
+/// ShareSessionRequest creates a share token for a session.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ShareSessionRequest {
+    /// session_id is the session to share
+    #[prost(string, tag = "1")]
+    pub session_id: ::prost::alloc::string::String,
+    /// role is the role to grant via the share link
+    #[prost(enumeration = "SshSessionRole", tag = "2")]
+    pub role: i32,
+    /// expires_in_seconds is how long the share token is valid (0 = no expiry)
+    #[prost(int64, tag = "3")]
+    pub expires_in_seconds: i64,
+    /// max_uses is the maximum number of times the token can be used (0 = unlimited)
+    #[prost(int32, tag = "4")]
+    pub max_uses: i32,
+}
+/// ShareSessionResponse returns the share token.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ShareSessionResponse {
+    /// share_token is the generated share token
+    #[prost(string, tag = "1")]
+    pub share_token: ::prost::alloc::string::String,
+    /// share_url is the full URL for sharing
+    #[prost(string, tag = "2")]
+    pub share_url: ::prost::alloc::string::String,
+    /// error is set if sharing failed
+    #[prost(string, tag = "3")]
+    pub error: ::prost::alloc::string::String,
+}
+/// PublishSessionRequest publishes a session to rune.host.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PublishSessionRequest {
+    /// session_id is the session to publish
+    #[prost(string, tag = "1")]
+    pub session_id: ::prost::alloc::string::String,
+    /// slug is the desired URL slug (optional, auto-generated if empty)
+    #[prost(string, tag = "2")]
+    pub slug: ::prost::alloc::string::String,
+    /// visibility is the visibility level
+    #[prost(enumeration = "SshSessionVisibility", tag = "3")]
+    pub visibility: i32,
+    /// allow_input allows viewers to send input
+    #[prost(bool, tag = "4")]
+    pub allow_input: bool,
+}
+/// PublishSessionResponse returns the publish URL.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PublishSessionResponse {
+    /// publish_url is the full URL for the published session
+    #[prost(string, tag = "1")]
+    pub publish_url: ::prost::alloc::string::String,
+    /// slug is the assigned slug
+    #[prost(string, tag = "2")]
+    pub slug: ::prost::alloc::string::String,
+    /// error is set if publishing failed
+    #[prost(string, tag = "3")]
+    pub error: ::prost::alloc::string::String,
+}
+// =============================================================================
+// SSH Session Management (Resume/Share/Publish)
+// =============================================================================
+
+/// SSHSessionState represents the state of an SSH session.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SshSessionState {
+    Unspecified = 0,
+    /// Session is active
+    Active = 1,
+    /// Session is suspended (can be resumed)
+    Suspended = 2,
+    /// Session has ended
+    Terminated = 3,
+}
+impl SshSessionState {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "SSH_SESSION_STATE_UNSPECIFIED",
+            Self::Active => "SSH_SESSION_STATE_ACTIVE",
+            Self::Suspended => "SSH_SESSION_STATE_SUSPENDED",
+            Self::Terminated => "SSH_SESSION_STATE_TERMINATED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SSH_SESSION_STATE_UNSPECIFIED" => Some(Self::Unspecified),
+            "SSH_SESSION_STATE_ACTIVE" => Some(Self::Active),
+            "SSH_SESSION_STATE_SUSPENDED" => Some(Self::Suspended),
+            "SSH_SESSION_STATE_TERMINATED" => Some(Self::Terminated),
+            _ => None,
+        }
+    }
+}
+/// SSHSessionRole represents a user's role in a session.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SshSessionRole {
+    Unspecified = 0,
+    /// Full control
+    Owner = 1,
+    /// Can input, cannot manage
+    Collaborator = 2,
+    /// Read-only access
+    Viewer = 3,
+    /// Can publish only
+    Publisher = 4,
+}
+impl SshSessionRole {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "SSH_SESSION_ROLE_UNSPECIFIED",
+            Self::Owner => "SSH_SESSION_ROLE_OWNER",
+            Self::Collaborator => "SSH_SESSION_ROLE_COLLABORATOR",
+            Self::Viewer => "SSH_SESSION_ROLE_VIEWER",
+            Self::Publisher => "SSH_SESSION_ROLE_PUBLISHER",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SSH_SESSION_ROLE_UNSPECIFIED" => Some(Self::Unspecified),
+            "SSH_SESSION_ROLE_OWNER" => Some(Self::Owner),
+            "SSH_SESSION_ROLE_COLLABORATOR" => Some(Self::Collaborator),
+            "SSH_SESSION_ROLE_VIEWER" => Some(Self::Viewer),
+            "SSH_SESSION_ROLE_PUBLISHER" => Some(Self::Publisher),
+            _ => None,
+        }
+    }
+}
+/// SSHSessionVisibility represents the visibility of a published session.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SshSessionVisibility {
+    Unspecified = 0,
+    /// Organization only
+    Internal = 1,
+    /// Any authenticated user
+    Authenticated = 2,
+    /// Anyone (anonymous)
+    Public = 3,
+}
+impl SshSessionVisibility {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "SSH_SESSION_VISIBILITY_UNSPECIFIED",
+            Self::Internal => "SSH_SESSION_VISIBILITY_INTERNAL",
+            Self::Authenticated => "SSH_SESSION_VISIBILITY_AUTHENTICATED",
+            Self::Public => "SSH_SESSION_VISIBILITY_PUBLIC",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SSH_SESSION_VISIBILITY_UNSPECIFIED" => Some(Self::Unspecified),
+            "SSH_SESSION_VISIBILITY_INTERNAL" => Some(Self::Internal),
+            "SSH_SESSION_VISIBILITY_AUTHENTICATED" => Some(Self::Authenticated),
+            "SSH_SESSION_VISIBILITY_PUBLIC" => Some(Self::Public),
+            _ => None,
+        }
+    }
+}
+/// SSHSessionEventType represents types of session events.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SshSessionEventType {
+    SshSessionEventUnspecified = 0,
+    SshSessionEventCreated = 1,
+    SshSessionEventResumed = 2,
+    SshSessionEventSuspended = 3,
+    SshSessionEventTerminated = 4,
+    SshSessionEventShared = 5,
+    SshSessionEventShareRevoked = 6,
+    SshSessionEventPublished = 7,
+    SshSessionEventUnpublished = 8,
+    SshSessionEventAclChanged = 9,
+    SshSessionEventUserJoined = 10,
+    SshSessionEventUserLeft = 11,
+}
+impl SshSessionEventType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::SshSessionEventUnspecified => "SSH_SESSION_EVENT_UNSPECIFIED",
+            Self::SshSessionEventCreated => "SSH_SESSION_EVENT_CREATED",
+            Self::SshSessionEventResumed => "SSH_SESSION_EVENT_RESUMED",
+            Self::SshSessionEventSuspended => "SSH_SESSION_EVENT_SUSPENDED",
+            Self::SshSessionEventTerminated => "SSH_SESSION_EVENT_TERMINATED",
+            Self::SshSessionEventShared => "SSH_SESSION_EVENT_SHARED",
+            Self::SshSessionEventShareRevoked => "SSH_SESSION_EVENT_SHARE_REVOKED",
+            Self::SshSessionEventPublished => "SSH_SESSION_EVENT_PUBLISHED",
+            Self::SshSessionEventUnpublished => "SSH_SESSION_EVENT_UNPUBLISHED",
+            Self::SshSessionEventAclChanged => "SSH_SESSION_EVENT_ACL_CHANGED",
+            Self::SshSessionEventUserJoined => "SSH_SESSION_EVENT_USER_JOINED",
+            Self::SshSessionEventUserLeft => "SSH_SESSION_EVENT_USER_LEFT",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SSH_SESSION_EVENT_UNSPECIFIED" => Some(Self::SshSessionEventUnspecified),
+            "SSH_SESSION_EVENT_CREATED" => Some(Self::SshSessionEventCreated),
+            "SSH_SESSION_EVENT_RESUMED" => Some(Self::SshSessionEventResumed),
+            "SSH_SESSION_EVENT_SUSPENDED" => Some(Self::SshSessionEventSuspended),
+            "SSH_SESSION_EVENT_TERMINATED" => Some(Self::SshSessionEventTerminated),
+            "SSH_SESSION_EVENT_SHARED" => Some(Self::SshSessionEventShared),
+            "SSH_SESSION_EVENT_SHARE_REVOKED" => Some(Self::SshSessionEventShareRevoked),
+            "SSH_SESSION_EVENT_PUBLISHED" => Some(Self::SshSessionEventPublished),
+            "SSH_SESSION_EVENT_UNPUBLISHED" => Some(Self::SshSessionEventUnpublished),
+            "SSH_SESSION_EVENT_ACL_CHANGED" => Some(Self::SshSessionEventAclChanged),
+            "SSH_SESSION_EVENT_USER_JOINED" => Some(Self::SshSessionEventUserJoined),
+            "SSH_SESSION_EVENT_USER_LEFT" => Some(Self::SshSessionEventUserLeft),
+            _ => None,
+        }
+    }
+}
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct LoginResponse {
     #[prost(string, tag = "1")]

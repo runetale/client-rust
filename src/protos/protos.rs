@@ -1148,6 +1148,10 @@ pub struct NetworkMapResponse {
     /// which is critical for accurate key expiry evaluation.
     #[prost(message, optional, tag = "25")]
     pub server_time: ::core::option::Option<::prost_types::Timestamp>,
+    /// ssh_policy defines SSH access control rules for this node.
+    /// If set, the node should run an SSH server with these rules.
+    #[prost(message, optional, tag = "26")]
+    pub ssh_policy: ::core::option::Option<SshPolicy>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CerfMap {
@@ -1402,6 +1406,127 @@ pub struct FilteredPeer {
     /// reason is why the peer was filtered
     #[prost(string, tag = "4")]
     pub reason: ::prost::alloc::string::String,
+}
+// =============================================================================
+// SSH Policy
+// =============================================================================
+
+/// SSHPolicy defines SSH access control rules for a node.
+/// Rules are evaluated in order; the first matching rule determines the action.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SshPolicy {
+    #[prost(message, repeated, tag = "1")]
+    pub rules: ::prost::alloc::vec::Vec<SshRule>,
+}
+/// SSHRule defines a single SSH access control rule.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SshRule {
+    /// rule_id is a unique identifier for this rule (for auditing)
+    #[prost(string, tag = "1")]
+    pub rule_id: ::prost::alloc::string::String,
+    /// rule_expires is when this rule expires (Unix timestamp, 0 = no expiry)
+    #[prost(int64, tag = "2")]
+    pub rule_expires: i64,
+    /// principals defines who can connect (evaluated with OR logic)
+    #[prost(message, repeated, tag = "3")]
+    pub principals: ::prost::alloc::vec::Vec<SshPrincipal>,
+    /// ssh_users maps SSH usernames to local usernames
+    /// Key: SSH username or "*" (wildcard)
+    /// Value: local username, "=" (same as SSH user), or "" (deny)
+    #[prost(map = "string, string", tag = "4")]
+    pub ssh_users: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    /// action defines what happens when this rule matches
+    #[prost(message, optional, tag = "5")]
+    pub action: ::core::option::Option<SshAction>,
+    /// accept_env is a list of environment variable patterns to allow
+    /// Supports wildcards: * (any chars) and ? (single char)
+    #[prost(string, repeated, tag = "6")]
+    pub accept_env: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// Audit fields
+    #[prost(string, tag = "7")]
+    pub created_by: ::prost::alloc::string::String,
+    /// Unix timestamp
+    #[prost(int64, tag = "8")]
+    pub created_at: i64,
+}
+/// SSHPrincipal defines conditions for matching SSH connection sources.
+/// Multiple fields are evaluated with OR logic within a principal,
+/// but all non-empty fields must match.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SshPrincipal {
+    /// Basic match conditions (OR logic)
+    ///
+    /// Match by node ID
+    #[prost(uint64, tag = "1")]
+    pub node_id: u64,
+    /// Match by node IP (CIDR supported)
+    #[prost(string, tag = "2")]
+    pub node_ip: ::prost::alloc::string::String,
+    /// Match by user ID
+    #[prost(uint64, tag = "3")]
+    pub user_id: u64,
+    /// Match by user login (email format)
+    #[prost(string, tag = "4")]
+    pub user_login: ::prost::alloc::string::String,
+    /// Match any connection
+    #[prost(bool, tag = "5")]
+    pub any: bool,
+    /// runetale-specific: Match by group/fleet membership
+    ///
+    /// Match nodes in these fleets
+    #[prost(string, repeated, tag = "6")]
+    pub fleet_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// Match users in these groups
+    #[prost(string, repeated, tag = "7")]
+    pub group_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// Additional authentication requirements
+    /// If set, one of these public keys must be presented
+    /// Supports URL format (e.g., <https://github.com/username.keys>)
+    #[prost(string, repeated, tag = "8")]
+    pub pub_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// SSHAction defines what happens when an SSH rule matches.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SshAction {
+    /// message is displayed to the user before the action
+    #[prost(string, tag = "1")]
+    pub message: ::prost::alloc::string::String,
+    /// Action type (reject takes priority over accept)
+    #[prost(bool, tag = "2")]
+    pub reject: bool,
+    #[prost(bool, tag = "3")]
+    pub accept: bool,
+    /// Session settings
+    ///
+    /// Max session duration in seconds (0 = unlimited)
+    #[prost(uint32, tag = "4")]
+    pub session_duration: u32,
+    /// Allow SSH agent forwarding
+    #[prost(bool, tag = "5")]
+    pub allow_agent_forwarding: bool,
+    /// Allow local port forwarding (-L)
+    #[prost(bool, tag = "6")]
+    pub allow_local_port_forwarding: bool,
+    /// Allow remote port forwarding (-R)
+    #[prost(bool, tag = "7")]
+    pub allow_remote_port_forwarding: bool,
+    /// Session recording
+    ///
+    /// Recording destination URLs
+    #[prost(string, repeated, tag = "8")]
+    pub recorders: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(message, optional, tag = "9")]
+    pub on_recording_failure: ::core::option::Option<SshRecorderFailureAction>,
+}
+/// SSHRecorderFailureAction defines behavior when session recording fails.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SshRecorderFailureAction {
+    /// reject_session_with_message rejects the session if recording fails to start
+    #[prost(string, tag = "1")]
+    pub reject_session_with_message: ::prost::alloc::string::String,
+    /// terminate_session_with_message terminates the session if recording fails mid-session
+    #[prost(string, tag = "2")]
+    pub terminate_session_with_message: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct LoginResponse {

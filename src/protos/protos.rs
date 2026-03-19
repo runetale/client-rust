@@ -1662,6 +1662,9 @@ pub struct UpdateSessionStateRequest {
     /// new_state is the new state
     #[prost(enumeration = "SshSessionState", tag = "2")]
     pub new_state: i32,
+    /// scrollback is the terminal scrollback buffer (only used when suspending)
+    #[prost(bytes = "vec", tag = "3")]
+    pub scrollback: ::prost::alloc::vec::Vec<u8>,
 }
 /// UpdateSessionStateResponse is returned after updating session state.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

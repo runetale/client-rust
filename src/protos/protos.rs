@@ -1517,6 +1517,14 @@ pub struct SshAction {
     pub recorders: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(message, optional, tag = "9")]
     pub on_recording_failure: ::core::option::Option<SshRecorderFailureAction>,
+    /// Port forwarding restrictions (empty = all ports allowed when forwarding is enabled)
+    ///
+    /// Restrict -L to these destination ports only
+    #[prost(uint32, repeated, tag = "11")]
+    pub allowed_local_ports: ::prost::alloc::vec::Vec<u32>,
+    /// Restrict -R to these listen ports only
+    #[prost(uint32, repeated, tag = "12")]
+    pub allowed_remote_ports: ::prost::alloc::vec::Vec<u32>,
 }
 /// SSHRecorderFailureAction defines behavior when session recording fails.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

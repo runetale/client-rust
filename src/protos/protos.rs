@@ -686,6 +686,11 @@ pub struct PeerStatus {
     /// last_seen: 最後にオンラインだった時刻（オフライン時のみ設定）
     #[prost(message, optional, tag = "19")]
     pub last_seen: ::core::option::Option<::prost_types::Timestamp>,
+    /// ssh_host_keys are the SSH host public keys for this node.
+    /// Each entry is in authorized_keys format (e.g. "ssh-ed25519 AAAA...").
+    /// Used by `runetale ssh` to build a per-node known_hosts file.
+    #[prost(string, repeated, tag = "20")]
+    pub ssh_host_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UserspacePeerEngineStatus {
@@ -1006,6 +1011,12 @@ pub struct Node {
     /// Only set when Network Lock is enabled for the Runetale Network.
     #[prost(bytes = "vec", tag = "18")]
     pub key_signature: ::prost::alloc::vec::Vec<u8>,
+    /// ssh_host_keys are the SSH host public keys for this node.
+    /// Each entry is in authorized_keys format (e.g. "ssh-ed25519 AAAA...").
+    /// Distributed via NetworkMap so that connecting clients can verify host identity
+    /// without relying on ~/.ssh/known_hosts.
+    #[prost(string, repeated, tag = "19")]
+    pub ssh_host_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ComposeNodeResponse {

@@ -1033,9 +1033,36 @@ pub struct ComposeNodeResponse {
     #[prost(string, tag = "6")]
     pub login_name: ::prost::alloc::string::String,
 }
+/// HostMeta contains metadata about the connecting host.
+/// Sent from client to server to describe the node's current state and capabilities.
+/// This is included in NetworkMapRequest on initial connection and when host state changes.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct HostMeta {
+    /// os is the operating system (e.g., "linux", "darwin", "windows").
+    #[prost(string, tag = "1")]
+    pub os: ::prost::alloc::string::String,
+    /// hostname is the device hostname.
+    #[prost(string, tag = "2")]
+    pub hostname: ::prost::alloc::string::String,
+    /// distro is the Linux distribution name (empty on non-Linux).
+    #[prost(string, tag = "3")]
+    pub distro: ::prost::alloc::string::String,
+    /// computer_name is the human-friendly device name.
+    #[prost(string, tag = "4")]
+    pub computer_name: ::prost::alloc::string::String,
+    /// routable_ips are the CIDR prefixes this node advertises as reachable through it.
+    /// Subnet routes: e.g., "10.0.0.0/8", "192.168.1.0/24"
+    /// Exit node: "0.0.0.0/0" and "::/0" together indicate exit node capability.
+    #[prost(string, repeated, tag = "5")]
+    pub routable_ips: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// ssh_host_keys are the SSH host public keys for this node.
+    /// Each entry is in authorized_keys format (e.g., "ssh-ed25519 AAAA...").
+    #[prost(string, repeated, tag = "6")]
+    pub ssh_host_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
 /// NetworkMapRequest is sent from client to server in the ConnectNetworkMapTable stream.
 /// It contains the client's VPN state and is used for keepalive.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct NetworkMapRequest {
     /// vpn_running indicates whether the VPN is currently active (up=true, down=false).
     /// This is different from the stream connection status - the stream stays connected
@@ -1046,6 +1073,11 @@ pub struct NetworkMapRequest {
     /// When false, it's a state change notification.
     #[prost(bool, optional, tag = "2")]
     pub is_keepalive: ::core::option::Option<bool>,
+    /// host_meta contains metadata about the connecting host.
+    /// Sent on initial connection and when host state changes (e.g., route advertisement).
+    /// May be omitted on keepalive messages.
+    #[prost(message, optional, tag = "3")]
+    pub host_meta: ::core::option::Option<HostMeta>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct NetPortRange {

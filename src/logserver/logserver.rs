@@ -293,6 +293,79 @@ pub struct StoredPacketFlowLog {
     pub dst_node_id: ::prost::alloc::string::String,
 }
 // =============================================================================
+// Single tenant traffic summary
+// =============================================================================
+
+/// GetTenantTrafficSummaryRequest queries aggregated traffic for a single tenant.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetTenantTrafficSummaryRequest {
+    /// domain_telemetry_log_id is the tenant-level telemetry ID (from tenant_specs).
+    #[prost(string, tag = "1")]
+    pub domain_telemetry_log_id: ::prost::alloc::string::String,
+    /// from is the start of the time range (inclusive). Defaults to 30 days ago if unset.
+    #[prost(message, optional, tag = "2")]
+    pub from: ::core::option::Option<::prost_types::Timestamp>,
+    /// to is the end of the time range (exclusive). Defaults to now if unset.
+    #[prost(message, optional, tag = "3")]
+    pub to: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// GetTenantTrafficSummaryResponse contains the aggregated traffic for a tenant.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetTenantTrafficSummaryResponse {
+    /// domain_telemetry_log_id is the queried tenant-level telemetry ID.
+    #[prost(string, tag = "1")]
+    pub domain_telemetry_log_id: ::prost::alloc::string::String,
+    /// total_tx_bytes is the total transmitted bytes in the time range.
+    #[prost(int64, tag = "2")]
+    pub total_tx_bytes: i64,
+    /// total_rx_bytes is the total received bytes in the time range.
+    #[prost(int64, tag = "3")]
+    pub total_rx_bytes: i64,
+    /// total_bytes is the sum of tx + rx bytes.
+    #[prost(int64, tag = "4")]
+    pub total_bytes: i64,
+}
+// =============================================================================
+// Batch tenant traffic summaries
+// =============================================================================
+
+/// GetTenantTrafficSummariesRequest queries aggregated traffic for multiple tenants.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetTenantTrafficSummariesRequest {
+    /// domain_telemetry_log_ids is the list of tenant-level telemetry IDs to query.
+    #[prost(string, repeated, tag = "1")]
+    pub domain_telemetry_log_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// from is the start of the time range (inclusive). Defaults to 30 days ago if unset.
+    #[prost(message, optional, tag = "2")]
+    pub from: ::core::option::Option<::prost_types::Timestamp>,
+    /// to is the end of the time range (exclusive). Defaults to now if unset.
+    #[prost(message, optional, tag = "3")]
+    pub to: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// GetTenantTrafficSummariesResponse contains the aggregated traffic for multiple tenants.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTenantTrafficSummariesResponse {
+    /// summaries is the list of per-tenant traffic summaries.
+    #[prost(message, repeated, tag = "1")]
+    pub summaries: ::prost::alloc::vec::Vec<TenantTrafficSummary>,
+}
+/// TenantTrafficSummary is the traffic summary for a single tenant.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TenantTrafficSummary {
+    /// domain_telemetry_log_id is the tenant-level telemetry ID.
+    #[prost(string, tag = "1")]
+    pub domain_telemetry_log_id: ::prost::alloc::string::String,
+    /// total_tx_bytes is the total transmitted bytes in the time range.
+    #[prost(int64, tag = "2")]
+    pub total_tx_bytes: i64,
+    /// total_rx_bytes is the total received bytes in the time range.
+    #[prost(int64, tag = "3")]
+    pub total_rx_bytes: i64,
+    /// total_bytes is the sum of tx + rx bytes.
+    #[prost(int64, tag = "4")]
+    pub total_bytes: i64,
+}
+// =============================================================================
 // Loglyph (client debug logs)
 // =============================================================================
 

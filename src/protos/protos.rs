@@ -1059,6 +1059,10 @@ pub struct HostMeta {
     /// Each entry is in authorized_keys format (e.g., "ssh-ed25519 AAAA...").
     #[prost(string, repeated, tag = "6")]
     pub ssh_host_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// app_linker indicates whether this node is actively running as an app-linker.
+    /// When true, the node is processing DNS queries and advertising routes for configured domains.
+    #[prost(bool, tag = "7")]
+    pub app_linker: bool,
 }
 /// NetworkMapRequest is sent from client to server in the ConnectNetworkMapTable stream.
 /// It contains the client's VPN state and is used for keepalive.

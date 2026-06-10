@@ -423,246 +423,6 @@ pub struct LoglyphUploadResponse {
     pub reason: ::prost::alloc::string::String,
 }
 // =============================================================================
-// Orbit (telemetry events)
-// =============================================================================
-
-/// OrbitBatchUploadRequest contains a batch of telemetry events from a client.
-/// Used inside StreamLogRequest.orbit.
-/// The log server identifies the stream via log_stream_id (derived from private-id).
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct OrbitBatchUploadRequest {
-    /// version is the client version string (e.g. "1.2.3").
-    #[prost(string, tag = "1")]
-    pub version: ::prost::alloc::string::String,
-    /// session_id is a unique identifier for the client session.
-    #[prost(string, tag = "2")]
-    pub session_id: ::prost::alloc::string::String,
-    /// events is the list of telemetry events to upload.
-    #[prost(message, repeated, tag = "3")]
-    pub events: ::prost::alloc::vec::Vec<OrbitEvent>,
-}
-/// OrbitBatchUploadResponse is returned inside StreamLogResponse.ack
-/// when processing orbit events. Kept for structured per-type feedback.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct OrbitBatchUploadResponse {
-    /// accepted is the number of events successfully stored.
-    #[prost(uint32, tag = "1")]
-    pub accepted: u32,
-    /// dropped is the number of events dropped (rate limit, size limit, etc.).
-    #[prost(uint32, tag = "2")]
-    pub dropped: u32,
-    /// reason is set if any events were dropped.
-    #[prost(string, tag = "3")]
-    pub reason: ::prost::alloc::string::String,
-}
-/// OrbitEvent is a single telemetry event.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct OrbitEvent {
-    /// at is the client-side timestamp when the event occurred.
-    #[prost(message, optional, tag = "1")]
-    pub at: ::core::option::Option<::prost_types::Timestamp>,
-    /// peer_hash is the first 8 bytes of SHA256(peer_public_key).
-    /// Used for correlation without exposing full keys.
-    #[prost(bytes = "vec", tag = "2")]
-    pub peer_hash: ::prost::alloc::vec::Vec<u8>,
-    /// region_id is the CERF region ID (if applicable).
-    #[prost(uint32, tag = "3")]
-    pub region_id: u32,
-    /// transport is the transport type used.
-    #[prost(enumeration = "Transport", tag = "4")]
-    pub transport: i32,
-    /// payload is one of the event types below.
-    #[prost(oneof = "orbit_event::Payload", tags = "10, 11, 12, 13, 14, 15")]
-    pub payload: ::core::option::Option<orbit_event::Payload>,
-}
-/// Nested message and enum types in `OrbitEvent`.
-pub mod orbit_event {
-    /// payload is one of the event types below.
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum Payload {
-        #[prost(message, tag = "10")]
-        SendResult(super::SendResultEvent),
-        #[prost(message, tag = "11")]
-        RecvResult(super::RecvResultEvent),
-        #[prost(message, tag = "12")]
-        CerfConn(super::CerfConnEvent),
-        #[prost(message, tag = "13")]
-        Ice(super::IceEvent),
-        #[prost(message, tag = "14")]
-        Filter(super::FilterEvent),
-        #[prost(message, tag = "15")]
-        PathTransition(super::PathTransitionEvent),
-    }
-}
-/// SendResultEvent records the result of sending a packet.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct SendResultEvent {
-    #[prost(bool, tag = "1")]
-    pub ok: bool,
-    #[prost(string, tag = "2")]
-    pub error: ::prost::alloc::string::String,
-}
-/// RecvResultEvent records the result of receiving a packet.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct RecvResultEvent {
-    /// kind: 0=data, 1=keepalive, 2=handshake, etc.
-    #[prost(int32, tag = "1")]
-    pub kind: i32,
-    #[prost(uint32, tag = "2")]
-    pub size: u32,
-}
-/// CerfConnEvent records CERF connection state changes.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct CerfConnEvent {
-    #[prost(enumeration = "cerf_conn_event::State", tag = "1")]
-    pub state: i32,
-    #[prost(string, tag = "2")]
-    pub error: ::prost::alloc::string::String,
-}
-/// Nested message and enum types in `CerfConnEvent`.
-pub mod cerf_conn_event {
-    #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-    #[repr(i32)]
-    pub enum State {
-        CerfConnStateUnknown = 0,
-        CerfConnStateConnecting = 1,
-        CerfConnStateConnected = 2,
-        CerfConnStateDisconnected = 3,
-        CerfConnStateRecvError = 4,
-    }
-    impl State {
-        /// String value of the enum field names used in the ProtoBuf definition.
-        ///
-        /// The values are not transformed in any way and thus are considered stable
-        /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-        pub fn as_str_name(&self) -> &'static str {
-            match self {
-                Self::CerfConnStateUnknown => "CERF_CONN_STATE_UNKNOWN",
-                Self::CerfConnStateConnecting => "CERF_CONN_STATE_CONNECTING",
-                Self::CerfConnStateConnected => "CERF_CONN_STATE_CONNECTED",
-                Self::CerfConnStateDisconnected => "CERF_CONN_STATE_DISCONNECTED",
-                Self::CerfConnStateRecvError => "CERF_CONN_STATE_RECV_ERROR",
-            }
-        }
-        /// Creates an enum from field names used in the ProtoBuf definition.
-        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-            match value {
-                "CERF_CONN_STATE_UNKNOWN" => Some(Self::CerfConnStateUnknown),
-                "CERF_CONN_STATE_CONNECTING" => Some(Self::CerfConnStateConnecting),
-                "CERF_CONN_STATE_CONNECTED" => Some(Self::CerfConnStateConnected),
-                "CERF_CONN_STATE_DISCONNECTED" => Some(Self::CerfConnStateDisconnected),
-                "CERF_CONN_STATE_RECV_ERROR" => Some(Self::CerfConnStateRecvError),
-                _ => None,
-            }
-        }
-    }
-}
-/// IceEvent records ICE negotiation state changes.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct IceEvent {
-    #[prost(enumeration = "ice_event::State", tag = "1")]
-    pub state: i32,
-    /// e.g. "host", "srflx", "relay"
-    #[prost(string, tag = "2")]
-    pub candidate_type: ::prost::alloc::string::String,
-}
-/// Nested message and enum types in `IceEvent`.
-pub mod ice_event {
-    #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-    #[repr(i32)]
-    pub enum State {
-        IceStateUnknown = 0,
-        IceStateChecking = 1,
-        IceStateConnected = 2,
-        IceStateCompleted = 3,
-        IceStateFailed = 4,
-        IceStateDisconnected = 5,
-        IceStateClosed = 6,
-    }
-    impl State {
-        /// String value of the enum field names used in the ProtoBuf definition.
-        ///
-        /// The values are not transformed in any way and thus are considered stable
-        /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-        pub fn as_str_name(&self) -> &'static str {
-            match self {
-                Self::IceStateUnknown => "ICE_STATE_UNKNOWN",
-                Self::IceStateChecking => "ICE_STATE_CHECKING",
-                Self::IceStateConnected => "ICE_STATE_CONNECTED",
-                Self::IceStateCompleted => "ICE_STATE_COMPLETED",
-                Self::IceStateFailed => "ICE_STATE_FAILED",
-                Self::IceStateDisconnected => "ICE_STATE_DISCONNECTED",
-                Self::IceStateClosed => "ICE_STATE_CLOSED",
-            }
-        }
-        /// Creates an enum from field names used in the ProtoBuf definition.
-        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-            match value {
-                "ICE_STATE_UNKNOWN" => Some(Self::IceStateUnknown),
-                "ICE_STATE_CHECKING" => Some(Self::IceStateChecking),
-                "ICE_STATE_CONNECTED" => Some(Self::IceStateConnected),
-                "ICE_STATE_COMPLETED" => Some(Self::IceStateCompleted),
-                "ICE_STATE_FAILED" => Some(Self::IceStateFailed),
-                "ICE_STATE_DISCONNECTED" => Some(Self::IceStateDisconnected),
-                "ICE_STATE_CLOSED" => Some(Self::IceStateClosed),
-                _ => None,
-            }
-        }
-    }
-}
-/// FilterEvent records packet filter decisions.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct FilterEvent {
-    #[prost(enumeration = "filter_event::Result", tag = "1")]
-    pub result: i32,
-    /// e.g. "no_matching_rule", "jailed", etc.
-    #[prost(string, tag = "2")]
-    pub reason: ::prost::alloc::string::String,
-}
-/// Nested message and enum types in `FilterEvent`.
-pub mod filter_event {
-    #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-    #[repr(i32)]
-    pub enum Result {
-        FilterResultUnknown = 0,
-        FilterResultAccept = 1,
-        FilterResultDrop = 2,
-    }
-    impl Result {
-        /// String value of the enum field names used in the ProtoBuf definition.
-        ///
-        /// The values are not transformed in any way and thus are considered stable
-        /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-        pub fn as_str_name(&self) -> &'static str {
-            match self {
-                Self::FilterResultUnknown => "FILTER_RESULT_UNKNOWN",
-                Self::FilterResultAccept => "FILTER_RESULT_ACCEPT",
-                Self::FilterResultDrop => "FILTER_RESULT_DROP",
-            }
-        }
-        /// Creates an enum from field names used in the ProtoBuf definition.
-        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-            match value {
-                "FILTER_RESULT_UNKNOWN" => Some(Self::FilterResultUnknown),
-                "FILTER_RESULT_ACCEPT" => Some(Self::FilterResultAccept),
-                "FILTER_RESULT_DROP" => Some(Self::FilterResultDrop),
-                _ => None,
-            }
-        }
-    }
-}
-/// PathTransitionEvent records when the active path changes.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct PathTransitionEvent {
-    #[prost(enumeration = "Transport", tag = "1")]
-    pub from: i32,
-    #[prost(enumeration = "Transport", tag = "2")]
-    pub to: i32,
-    /// e.g. "ice_connected", "cerf_fallback", etc.
-    #[prost(string, tag = "3")]
-    pub reason: ::prost::alloc::string::String,
-}
-// =============================================================================
 // PacketFlowLog (network flow statistics)
 // =============================================================================
 
@@ -788,7 +548,7 @@ pub struct StreamLogRequest {
     /// The server echoes it back in StreamAck for delivery confirmation.
     #[prost(uint64, tag = "10")]
     pub sequence: u64,
-    #[prost(oneof = "stream_log_request::Payload", tags = "1, 2, 3")]
+    #[prost(oneof = "stream_log_request::Payload", tags = "1, 3")]
     pub payload: ::core::option::Option<stream_log_request::Payload>,
 }
 /// Nested message and enum types in `StreamLogRequest`.
@@ -798,9 +558,6 @@ pub mod stream_log_request {
         /// packet_flow carries network flow statistics (60s summaries).
         #[prost(message, tag = "1")]
         PacketFlow(super::PacketFlowLogUploadRequest),
-        /// orbit carries a batch of telemetry events.
-        #[prost(message, tag = "2")]
-        Orbit(super::OrbitBatchUploadRequest),
         /// loglyph carries a batch of client debug log entries.
         #[prost(message, tag = "3")]
         Loglyph(super::LoglyphUploadRequest),
@@ -841,9 +598,6 @@ pub struct LogConfigUpdate {
     /// netflow_enabled controls whether network flow logs are collected.
     #[prost(bool, tag = "3")]
     pub netflow_enabled: bool,
-    /// orbit_enabled controls whether orbit telemetry events are collected.
-    #[prost(bool, tag = "4")]
-    pub orbit_enabled: bool,
     /// loglyph_enabled controls whether client debug logs are collected.
     #[prost(bool, tag = "5")]
     pub loglyph_enabled: bool,
@@ -863,41 +617,5 @@ pub struct StreamAck {
     /// reason is set if any entries were dropped (e.g. "rate_limited", "too_large").
     #[prost(string, tag = "4")]
     pub reason: ::prost::alloc::string::String,
-}
-/// Transport describes how a packet was sent/received.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum Transport {
-    Unknown = 0,
-    Udp = 1,
-    Ice = 2,
-    Cerf = 3,
-    CerfWs = 4,
-}
-impl Transport {
-    /// String value of the enum field names used in the ProtoBuf definition.
-    ///
-    /// The values are not transformed in any way and thus are considered stable
-    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-    pub fn as_str_name(&self) -> &'static str {
-        match self {
-            Self::Unknown => "TRANSPORT_UNKNOWN",
-            Self::Udp => "TRANSPORT_UDP",
-            Self::Ice => "TRANSPORT_ICE",
-            Self::Cerf => "TRANSPORT_CERF",
-            Self::CerfWs => "TRANSPORT_CERF_WS",
-        }
-    }
-    /// Creates an enum from field names used in the ProtoBuf definition.
-    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-        match value {
-            "TRANSPORT_UNKNOWN" => Some(Self::Unknown),
-            "TRANSPORT_UDP" => Some(Self::Udp),
-            "TRANSPORT_ICE" => Some(Self::Ice),
-            "TRANSPORT_CERF" => Some(Self::Cerf),
-            "TRANSPORT_CERF_WS" => Some(Self::CerfWs),
-            _ => None,
-        }
-    }
 }
 // @@protoc_insertion_point(module)

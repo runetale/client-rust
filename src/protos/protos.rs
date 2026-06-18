@@ -1163,8 +1163,10 @@ pub struct NetworkMapResponse {
     /// jailedがtrueの場合全てのパケットを拒否する
     #[prost(bool, tag = "8")]
     pub jailed: bool,
+    /// ICE/STUN/TURN による NAT トラバーサルの対象となる全ピア候補。
+    /// Peers (ACL で許可された通信先) とは異なり、接続確立に必要な全ノードを含む。
     #[prost(message, repeated, tag = "9")]
-    pub ice_table: ::prost::alloc::vec::Vec<Node>,
+    pub potential_peers: ::prost::alloc::vec::Vec<Node>,
     #[prost(message, optional, tag = "10")]
     pub dns: ::core::option::Option<DnsConfig>,
     #[prost(message, repeated, tag = "11")]

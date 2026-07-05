@@ -1063,6 +1063,11 @@ pub struct HostMeta {
     /// When true, the node is processing DNS queries and advertising routes for configured domains.
     #[prost(bool, tag = "7")]
     pub app_linker: bool,
+    /// peer_api_port is the TCP port on which this node's PeerAPI HTTP server is
+    /// listening. Only set when app_linker is true. The server stores this and
+    /// distributes it to peers via AppLinker.peer_api_port in the NetworkMap.
+    #[prost(uint32, tag = "8")]
+    pub peer_api_port: u32,
 }
 /// NetworkMapRequest is sent from client to server in the ConnectNetworkMapTable stream.
 /// It contains the client's VPN state and is used for keepalive.

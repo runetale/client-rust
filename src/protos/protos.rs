@@ -1261,6 +1261,15 @@ pub struct AppLinker {
     /// ルートはCIDR表記で表現されます（例：192.168.1.0/24）。
     #[prost(string, repeated, tag = "3")]
     pub routes: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// node_id is the NodeID of the node running this AppLinker.
+    /// Clients use this to identify which peer's PeerAPI to send DNS queries to.
+    #[prost(uint64, tag = "4")]
+    pub node_id: u64,
+    /// peer_api_port is the TCP port on which the AppLinker node's PeerAPI is
+    /// listening. Clients configure Split DNS to forward queries for the
+    /// AppLinker's domains to this port on the AppLinker node's VPN IP.
+    #[prost(uint32, tag = "5")]
+    pub peer_api_port: u32,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Resolver {

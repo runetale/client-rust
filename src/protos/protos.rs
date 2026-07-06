@@ -1017,6 +1017,11 @@ pub struct Node {
     /// without relying on ~/.ssh/known_hosts.
     #[prost(string, repeated, tag = "19")]
     pub ssh_host_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// peer_api_port is the TCP port on which this node's PeerAPI HTTP server is
+    /// listening. Set by the server from the value reported in HostMeta, and
+    /// distributed to peers so they can send DNS queries to AppLinker nodes.
+    #[prost(uint32, tag = "20")]
+    pub peer_api_port: u32,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ComposeNodeResponse {

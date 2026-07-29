@@ -1073,6 +1073,10 @@ pub struct HostMeta {
     /// distributes it to peers via AppLinker.peer_api_port in the NetworkMap.
     #[prost(uint32, tag = "8")]
     pub peer_api_port: u32,
+    /// client_version is the Runetale client software version (e.g., "1.5.0").
+    /// Set by the client from its build-time version variable.
+    #[prost(string, tag = "9")]
+    pub client_version: ::prost::alloc::string::String,
 }
 /// NetworkMapRequest is sent from client to server in the ConnectNetworkMapTable stream.
 /// It contains the client's VPN state and is used for keepalive.

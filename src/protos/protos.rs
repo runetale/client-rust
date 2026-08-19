@@ -962,7 +962,7 @@ impl NegotiationType {
         }
     }
 }
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Node {
     #[prost(string, tag = "1")]
     pub name: ::prost::alloc::string::String,
@@ -1022,6 +1022,11 @@ pub struct Node {
     /// distributed to peers so they can send DNS queries to AppLinker nodes.
     #[prost(uint32, tag = "20")]
     pub peer_api_port: u32,
+    /// device_posture contains the device's security posture attributes.
+    /// Populated by the server from HostMeta reports. Distributed to peers
+    /// when the "runetale:device-posture" capability is enabled for the tenant.
+    #[prost(message, optional, tag = "21")]
+    pub device_posture: ::core::option::Option<DevicePosture>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ComposeNodeResponse {
@@ -1041,7 +1046,7 @@ pub struct ComposeNodeResponse {
 /// HostMeta contains metadata about the connecting host.
 /// Sent from client to server to describe the node's current state and capabilities.
 /// This is included in NetworkMapRequest on initial connection and when host state changes.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HostMeta {
     /// os is the operating system (e.g., "linux", "darwin", "windows").
     #[prost(string, tag = "1")]
@@ -1077,10 +1082,15 @@ pub struct HostMeta {
     /// Set by the client from its build-time version variable.
     #[prost(string, tag = "9")]
     pub client_version: ::prost::alloc::string::String,
+    /// device_posture contains the device's collected security posture.
+    /// Sent on initial connection and periodically (every 5 minutes) when changed.
+    /// Only populated when the server grants "runetale:device-posture" capability.
+    #[prost(message, optional, tag = "10")]
+    pub device_posture: ::core::option::Option<DevicePosture>,
 }
 /// NetworkMapRequest is sent from client to server in the ConnectNetworkMapTable stream.
 /// It contains the client's VPN state and is used for keepalive.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NetworkMapRequest {
     /// vpn_running indicates whether the VPN is currently active (up=true, down=false).
     /// This is different from the stream connection status - the stream stays connected
@@ -1864,6 +1874,101 @@ pub struct PublishSessionResponse {
     /// error is set if publishing failed
     #[prost(string, tag = "3")]
     pub error: ::prost::alloc::string::String,
+}
+// =============================================================================
+// Device Posture
+// =============================================================================
+
+/// DevicePosture contains device security posture attributes collected from the OS.
+/// Sent from client to server via HostMeta, and from server to peers via Node.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DevicePosture {
+    #[prost(message, optional, tag = "1")]
+    pub os_version: ::core::option::Option<OsVersion>,
+    #[prost(message, optional, tag = "2")]
+    pub system_info: ::core::option::Option<SystemInfo>,
+    #[prost(message, repeated, tag = "3")]
+    pub disk_encryption: ::prost::alloc::vec::Vec<DiskEncryption>,
+    #[prost(message, optional, tag = "4")]
+    pub firewall_status: ::core::option::Option<FirewallStatus>,
+    #[prost(message, repeated, tag = "5")]
+    pub security_software: ::prost::alloc::vec::Vec<SecuritySoftware>,
+    #[prost(string, tag = "6")]
+    pub serial_number: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "7")]
+    pub screen_lock: ::core::option::Option<ScreenLock>,
+    #[prost(uint64, tag = "8")]
+    pub uptime_seconds: u64,
+    #[prost(string, repeated, tag = "9")]
+    pub mac_addresses: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(message, optional, tag = "10")]
+    pub collected_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct OsVersion {
+    /// e.g. "macOS", "Ubuntu", "Windows 11"
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    /// e.g. "14.5", "22.04", "23H2"
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    /// e.g. "arm64", "amd64"
+    #[prost(string, tag = "3")]
+    pub arch: ::prost::alloc::string::String,
+    /// e.g. "darwin", "linux", "windows"
+    #[prost(string, tag = "4")]
+    pub platform: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SystemInfo {
+    #[prost(string, tag = "1")]
+    pub hostname: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub uuid: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub hardware_serial: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub cpu_type: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "5")]
+    pub physical_memory_bytes: u64,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DiskEncryption {
+    /// e.g. "/dev/sda1", "Macintosh HD", "C:"
+    #[prost(string, tag = "1")]
+    pub device: ::prost::alloc::string::String,
+    #[prost(bool, tag = "2")]
+    pub encrypted: bool,
+    /// "FileVault", "BitLocker", "LUKS"
+    #[prost(string, tag = "3")]
+    pub encryption_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct FirewallStatus {
+    #[prost(bool, tag = "1")]
+    pub enabled: bool,
+    /// "macOS Application Firewall", "UFW", "Windows Defender Firewall"
+    #[prost(string, tag = "2")]
+    pub r#type: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SecuritySoftware {
+    /// e.g. "CrowdStrike Falcon"
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    /// "antivirus", "antispyware", "firewall"
+    #[prost(string, tag = "2")]
+    pub r#type: ::prost::alloc::string::String,
+    /// "on", "off", "snoozed", "expired", "unknown"
+    #[prost(string, tag = "3")]
+    pub state: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ScreenLock {
+    #[prost(bool, tag = "1")]
+    pub password_required: bool,
+    #[prost(uint32, tag = "2")]
+    pub idle_timeout_seconds: u32,
 }
 // =============================================================================
 // SSH Session Management (Resume/Share/Publish)

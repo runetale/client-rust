@@ -2073,6 +2073,8 @@ pub struct LoginRequest {
     pub picture: ::prost::alloc::string::String,
     #[prost(string, tag = "8")]
     pub invite_code: ::prost::alloc::string::String,
+    #[prost(string, tag = "9")]
+    pub auth_provider: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AuthenticateResponse {

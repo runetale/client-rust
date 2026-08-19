@@ -1225,6 +1225,10 @@ pub struct NetworkMapResponse {
     /// If set, the node should run an SSH server with these rules.
     #[prost(message, optional, tag = "26")]
     pub ssh_policy: ::core::option::Option<SshPolicy>,
+    /// posture_checks defines posture check requirements from the server.
+    /// Client evaluates these and reports results in HostMeta.device_posture.process_results.
+    #[prost(message, optional, tag = "27")]
+    pub posture_checks: ::core::option::Option<PostureChecks>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CerfMap {
@@ -1903,6 +1907,9 @@ pub struct DevicePosture {
     pub mac_addresses: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(message, optional, tag = "10")]
     pub collected_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// process_results reports whether each server-requested process is running.
+    #[prost(message, repeated, tag = "11")]
+    pub process_results: ::prost::alloc::vec::Vec<ProcessCheckResult>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct OsVersion {
@@ -1969,6 +1976,51 @@ pub struct ScreenLock {
     pub password_required: bool,
     #[prost(uint32, tag = "2")]
     pub idle_timeout_seconds: u32,
+}
+/// PostureChecks defines what posture checks the client must evaluate.
+/// Sent from server to client via NetworkMapResponse.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PostureChecks {
+    /// processes are executable paths the client must verify are running.
+    #[prost(message, repeated, tag = "1")]
+    pub processes: ::prost::alloc::vec::Vec<PostureProcessCheck>,
+}
+/// PostureProcessCheck defines a process check requirement with OS-specific paths.
+/// The client selects the path matching its OS and checks if the process is running.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PostureProcessCheck {
+    /// server-side policy ID for result correlation
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    /// human-readable name, e.g. "CrowdStrike Falcon"
+    #[prost(string, tag = "2")]
+    pub display_name: ::prost::alloc::string::String,
+    /// e.g. "/opt/CrowdStrike/falcond"
+    #[prost(string, tag = "3")]
+    pub linux_path: ::prost::alloc::string::String,
+    /// e.g. "/Library/CS/falconctl"
+    #[prost(string, tag = "4")]
+    pub darwin_path: ::prost::alloc::string::String,
+    /// e.g. "C:\\Program Files\\CrowdStrike\\CSFalconService.exe"
+    #[prost(string, tag = "5")]
+    pub windows_path: ::prost::alloc::string::String,
+}
+/// ProcessCheckResult is the client's response for a single process check.
+/// Sent from client to server via HostMeta.device_posture.process_results.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ProcessCheckResult {
+    /// corresponds to PostureProcessCheck.id
+    #[prost(string, tag = "1")]
+    pub check_id: ::prost::alloc::string::String,
+    /// the OS-specific path that was checked
+    #[prost(string, tag = "2")]
+    pub path: ::prost::alloc::string::String,
+    /// whether the file exists on disk
+    #[prost(bool, tag = "3")]
+    pub file_exists: bool,
+    /// whether the process is currently running
+    #[prost(bool, tag = "4")]
+    pub process_running: bool,
 }
 // =============================================================================
 // SSH Session Management (Resume/Share/Publish)

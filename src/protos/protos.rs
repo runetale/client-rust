@@ -1984,6 +1984,30 @@ pub struct PostureChecks {
     /// processes are executable paths the client must verify are running.
     #[prost(message, repeated, tag = "1")]
     pub processes: ::prost::alloc::vec::Vec<PostureProcessCheck>,
+    /// os_version_check defines minimum OS version requirements.
+    #[prost(message, optional, tag = "2")]
+    pub os_version_check: ::core::option::Option<OsVersionCheck>,
+    /// disk_encryption_check defines disk encryption requirements.
+    #[prost(message, optional, tag = "3")]
+    pub disk_encryption_check: ::core::option::Option<DiskEncryptionCheck>,
+}
+/// OSVersionCheck defines the minimum OS version requirement.
+/// Client compares its OS version against min_version using semver.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct OsVersionCheck {
+    /// e.g. "14.0", "22.04", "10.0.22621"
+    #[prost(string, tag = "1")]
+    pub min_version: ::prost::alloc::string::String,
+    /// platforms this check applies to: "darwin", "linux", "windows"
+    #[prost(string, repeated, tag = "2")]
+    pub platforms: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// DiskEncryptionCheck defines disk encryption requirements.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DiskEncryptionCheck {
+    /// if true, all disks must be encrypted
+    #[prost(bool, tag = "1")]
+    pub required: bool,
 }
 /// PostureProcessCheck defines a process check requirement with OS-specific paths.
 /// The client selects the path matching its OS and checks if the process is running.

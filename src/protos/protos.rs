@@ -1027,6 +1027,11 @@ pub struct Node {
     /// when the "runetale:device-posture" capability is enabled for the tenant.
     #[prost(message, optional, tag = "21")]
     pub device_posture: ::core::option::Option<DevicePosture>,
+    /// wol_macs are this node's wired MAC addresses, as last reported in
+    /// HostMeta. Distributed to peers so one of them can wake this node while it
+    /// is asleep and therefore unable to answer for itself.
+    #[prost(string, repeated, tag = "22")]
+    pub wol_macs: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ComposeNodeResponse {
@@ -1087,6 +1092,12 @@ pub struct HostMeta {
     /// Only populated when the server grants "runetale:device-posture" capability.
     #[prost(message, optional, tag = "10")]
     pub device_posture: ::core::option::Option<DevicePosture>,
+    /// wol_macs are this node's wired MAC addresses, in "aa:bb:cc:dd:ee:ff" form.
+    /// A sleeping machine cannot run the client, so waking it means asking a peer
+    /// on the same LAN to broadcast a magic packet - which requires knowing the
+    /// address to wake while the node itself is still awake to report it.
+    #[prost(string, repeated, tag = "11")]
+    pub wol_macs: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 /// NetworkMapRequest is sent from client to server in the ConnectNetworkMapTable stream.
 /// It contains the client's VPN state and is used for keepalive.

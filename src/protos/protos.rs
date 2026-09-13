@@ -1098,6 +1098,18 @@ pub struct HostMeta {
     /// address to wake while the node itself is still awake to report it.
     #[prost(string, repeated, tag = "11")]
     pub wol_macs: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// preferred_cerf_region_id is the CERF region this node measured as nearest,
+    /// by STUN round trip to every region in the CerfMap. Zero means the node has
+    /// not measured one yet, and the server keeps whatever it already had.
+    ///
+    /// Relayed traffic goes through the *destination's* home region, so a node
+    /// reporting the region nearest to itself is what lets a peer reach it over a
+    /// short path. This cannot be decided server-side from the node's public
+    /// address: what matters is the route, not the map. It also cannot be left to
+    /// the connecting party, because a client with no UDP socket - a browser -
+    /// cannot measure at all, and yet is exactly the client that always relays.
+    #[prost(uint32, tag = "12")]
+    pub preferred_cerf_region_id: u32,
 }
 /// NetworkMapRequest is sent from client to server in the ConnectNetworkMapTable stream.
 /// It contains the client's VPN state and is used for keepalive.

@@ -639,6 +639,21 @@ pub struct HashiStatus {
     /// map\[key.NodePublic\]*PeerStatus
     #[prost(map = "string, message", tag = "5")]
     pub peer: ::std::collections::HashMap<::prost::alloc::string::String, PeerStatus>,
+    /// jailed is true while the server is blocking this node's traffic. Today the
+    /// only source is device posture enforcement.
+    ///
+    /// A jailed node is handed a network map with no peers, no packet filter and
+    /// no addresses, so everything the user can see is an absence: no peers
+    /// listed, no IP, nothing to connect to. That is indistinguishable from "the
+    /// network map has not arrived yet", and the two call for opposite responses
+    /// - waiting and reconnecting will never clear a jail. This field is what
+    /// lets the CLI and the desktop apps tell them apart and say which one it is.
+    #[prost(bool, tag = "6")]
+    pub jailed: bool,
+    /// jail_reason explains the jail in one line, e.g. "device posture
+    /// non-compliant". Empty while jailed is false.
+    #[prost(string, tag = "7")]
+    pub jail_reason: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct PeerStatus {

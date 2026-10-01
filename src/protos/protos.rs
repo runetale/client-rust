@@ -1125,6 +1125,42 @@ pub struct HostMeta {
     /// cannot measure at all, and yet is exactly the client that always relays.
     #[prost(uint32, tag = "12")]
     pub preferred_cerf_region_id: u32,
+    /// auto_update reports whether this node can apply server-directed client
+    /// updates and how its most recent attempt ended. The server shows it to
+    /// administrators deciding which nodes to enable auto-update on. Unset means
+    /// the client predates auto-update, which the server treats as unsupported.
+    #[prost(message, optional, tag = "13")]
+    pub auto_update: ::core::option::Option<AutoUpdateStatus>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AutoUpdateStatus {
+    #[prost(enumeration = "AutoUpdateInstallKind", tag = "1")]
+    pub install_kind: i32,
+    /// supported is true when this client can apply an update on its own.
+    /// False for installations owned by a package manager or the desktop app,
+    /// development builds, and platforms the client does not yet update.
+    #[prost(bool, tag = "2")]
+    pub supported: bool,
+    /// last_attempt is the most recent update this client tried to apply.
+    /// Unset when it has never attempted one.
+    #[prost(message, optional, tag = "3")]
+    pub last_attempt: ::core::option::Option<AutoUpdateAttempt>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AutoUpdateAttempt {
+    /// from_version and target_version are client versions as reported in
+    /// HostMeta.client_version (e.g., "0.0.27-hennge-stg").
+    #[prost(string, tag = "1")]
+    pub from_version: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub target_version: ::prost::alloc::string::String,
+    #[prost(bool, tag = "3")]
+    pub success: bool,
+    /// error describes why the attempt failed. Empty when success is true.
+    #[prost(string, tag = "4")]
+    pub error: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "5")]
+    pub finished_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// NetworkMapRequest is sent from client to server in the ConnectNetworkMapTable stream.
 /// It contains the client's VPN state and is used for keepalive.
@@ -2083,6 +2119,56 @@ pub struct ProcessCheckResult {
     /// whether the process is currently running
     #[prost(bool, tag = "4")]
     pub process_running: bool,
+}
+/// AutoUpdateInstallKind is how the client binaries were installed. It decides
+/// whether the client may replace itself: an installation owned by a package
+/// manager or by the desktop app must be updated through that owner instead.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AutoUpdateInstallKind {
+    Unspecified = 0,
+    /// Extracted from a release archive (install script)
+    Tarball = 1,
+    /// Installed from the APT repository
+    Deb = 2,
+    /// Installed with Homebrew
+    Homebrew = 3,
+    /// Bundled with the macOS desktop app
+    MacDesktop = 4,
+    /// Bundled with the Windows desktop app
+    WindowsDesktop = 5,
+    /// Local development build
+    Development = 6,
+}
+impl AutoUpdateInstallKind {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "AUTO_UPDATE_INSTALL_KIND_UNSPECIFIED",
+            Self::Tarball => "AUTO_UPDATE_INSTALL_KIND_TARBALL",
+            Self::Deb => "AUTO_UPDATE_INSTALL_KIND_DEB",
+            Self::Homebrew => "AUTO_UPDATE_INSTALL_KIND_HOMEBREW",
+            Self::MacDesktop => "AUTO_UPDATE_INSTALL_KIND_MAC_DESKTOP",
+            Self::WindowsDesktop => "AUTO_UPDATE_INSTALL_KIND_WINDOWS_DESKTOP",
+            Self::Development => "AUTO_UPDATE_INSTALL_KIND_DEVELOPMENT",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "AUTO_UPDATE_INSTALL_KIND_UNSPECIFIED" => Some(Self::Unspecified),
+            "AUTO_UPDATE_INSTALL_KIND_TARBALL" => Some(Self::Tarball),
+            "AUTO_UPDATE_INSTALL_KIND_DEB" => Some(Self::Deb),
+            "AUTO_UPDATE_INSTALL_KIND_HOMEBREW" => Some(Self::Homebrew),
+            "AUTO_UPDATE_INSTALL_KIND_MAC_DESKTOP" => Some(Self::MacDesktop),
+            "AUTO_UPDATE_INSTALL_KIND_WINDOWS_DESKTOP" => Some(Self::WindowsDesktop),
+            "AUTO_UPDATE_INSTALL_KIND_DEVELOPMENT" => Some(Self::Development),
+            _ => None,
+        }
+    }
 }
 // =============================================================================
 // SSH Session Management (Resume/Share/Publish)

@@ -1303,6 +1303,11 @@ pub struct NetworkMapResponse {
     /// Client evaluates these and reports results in HostMeta.device_posture.process_results.
     #[prost(message, optional, tag = "27")]
     pub posture_checks: ::core::option::Option<PostureChecks>,
+    /// http_services are the HTTP services this node runs. Only the services
+    /// this node hosts (ingress / gateway) or uses as a sender (local) are
+    /// included, so a node never receives header values meant for others.
+    #[prost(message, repeated, tag = "28")]
+    pub http_services: ::prost::alloc::vec::Vec<HttpService>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CerfMap {
@@ -2120,6 +2125,71 @@ pub struct ProcessCheckResult {
     #[prost(bool, tag = "4")]
     pub process_running: bool,
 }
+/// HTTPService is an HTTP reverse proxy run by runetaled. It forwards requests
+/// to target, adding headers chosen by the sender's runetale IP.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct HttpService {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(enumeration = "HttpServiceMode", tag = "3")]
+    pub mode: i32,
+    /// listen_port is the port the proxy listens on. Ingress and gateway listen
+    /// on the node's runetale IP; local listens on 127.0.0.1 only.
+    #[prost(uint32, tag = "4")]
+    pub listen_port: u32,
+    /// target is where requests are forwarded: http(s)://host[:port][/base].
+    #[prost(string, tag = "5")]
+    pub target: ::prost::alloc::string::String,
+    /// preserve_host keeps the incoming Host header instead of the target's.
+    #[prost(bool, tag = "6")]
+    pub preserve_host: bool,
+    /// identity_headers adds X-Runetale-User, X-Runetale-User-Display and
+    /// X-Runetale-Node describing the sender.
+    #[prost(bool, tag = "7")]
+    pub identity_headers: bool,
+    /// source_sets are the resolved sender prefixes, referenced by index from
+    /// HTTPHeader.source_set_indexes so that shared sets are sent once.
+    #[prost(message, repeated, tag = "8")]
+    pub source_sets: ::prost::alloc::vec::Vec<SourceSet>,
+    /// headers are already in evaluation order. For each header name the client
+    /// uses the first header whose sources match the sender and ignores the rest.
+    #[prost(message, repeated, tag = "9")]
+    pub headers: ::prost::alloc::vec::Vec<HttpHeader>,
+    /// strip_headers are removed from every incoming request before headers are
+    /// added, whether or not any header matches. They include X-Runetale-* and
+    /// every header name in headers. Names are canonical (Go's
+    /// http.CanonicalHeaderKey form, e.g. "X-Api-Key").
+    #[prost(string, repeated, tag = "10")]
+    pub strip_headers: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// SourceSet is a set of sender prefixes, e.g. "100.64.0.5/32".
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SourceSet {
+    #[prost(string, repeated, tag = "1")]
+    pub prefixes: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct HttpHeader {
+    /// name is canonical (Go's http.CanonicalHeaderKey form, e.g. "X-Api-Key").
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    /// value is plaintext, including when secret is set.
+    #[prost(string, tag = "2")]
+    pub value: ::prost::alloc::string::String,
+    /// secret marks the value as sensitive. The client must not write it to
+    /// logs, debug output, telemetry or bug reports.
+    #[prost(bool, tag = "3")]
+    pub secret: bool,
+    /// all_sources applies the header to every sender that can reach the
+    /// service. When false, the header applies only to senders matching one of
+    /// source_set_indexes; an empty list matches no one.
+    #[prost(bool, tag = "4")]
+    pub all_sources: bool,
+    #[prost(uint32, repeated, tag = "5")]
+    pub source_set_indexes: ::prost::alloc::vec::Vec<u32>,
+}
 /// AutoUpdateInstallKind is how the client binaries were installed. It decides
 /// whether the client may replace itself: an installation owned by a package
 /// manager or by the desktop app must be updated through that owner instead.
@@ -2339,6 +2409,43 @@ impl SshSessionEventType {
             "SSH_SESSION_EVENT_ACL_CHANGED" => Some(Self::SshSessionEventAclChanged),
             "SSH_SESSION_EVENT_USER_JOINED" => Some(Self::SshSessionEventUserJoined),
             "SSH_SESSION_EVENT_USER_LEFT" => Some(Self::SshSessionEventUserLeft),
+            _ => None,
+        }
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum HttpServiceMode {
+    Unspecified = 0,
+    /// INGRESS forwards to an application on the hosting node itself.
+    Ingress = 1,
+    /// GATEWAY forwards to an external API; the header values stay on the
+    /// hosting node.
+    Gateway = 2,
+    /// LOCAL runs on the sender's own device. The server sends only the headers
+    /// that apply to that device, each with all_sources set.
+    Local = 3,
+}
+impl HttpServiceMode {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "HTTP_SERVICE_MODE_UNSPECIFIED",
+            Self::Ingress => "HTTP_SERVICE_MODE_INGRESS",
+            Self::Gateway => "HTTP_SERVICE_MODE_GATEWAY",
+            Self::Local => "HTTP_SERVICE_MODE_LOCAL",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "HTTP_SERVICE_MODE_UNSPECIFIED" => Some(Self::Unspecified),
+            "HTTP_SERVICE_MODE_INGRESS" => Some(Self::Ingress),
+            "HTTP_SERVICE_MODE_GATEWAY" => Some(Self::Gateway),
+            "HTTP_SERVICE_MODE_LOCAL" => Some(Self::Local),
             _ => None,
         }
     }

@@ -1352,6 +1352,23 @@ pub struct CerfNode {
     /// optional: direct IPv6 address to bypass DNS resolution
     #[prost(string, tag = "9")]
     pub ipv6: ::prost::alloc::string::String,
+    /// relayPublicKey is the relay's current static X25519 public key (32 bytes).
+    /// Clients pin it for the v4 handshake. Empty means the node is not v4-capable.
+    #[prost(bytes = "vec", tag = "10")]
+    pub relay_public_key: ::prost::alloc::vec::Vec<u8>,
+    /// relayNextPublicKey is the key the relay is rotating to (32 bytes), set only
+    /// during a rotation. The relay accepts handshakes to either key while both are
+    /// published; a client tries relayPublicKey first and this key once if that fails.
+    #[prost(bytes = "vec", tag = "11")]
+    pub relay_next_public_key: ::prost::alloc::vec::Vec<u8>,
+    /// protocolVersion is the relay protocol the node speaks: 0 is the legacy v3
+    /// protocol, 4 is v4.
+    #[prost(uint32, tag = "12")]
+    pub protocol_version: u32,
+    /// waitForUpgrade tells the client to wait for the HTTP 101 response before
+    /// sending the v4 Hello. Set when the relay sits behind a proxy that parses HTTP.
+    #[prost(bool, tag = "13")]
+    pub wait_for_upgrade: bool,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AppLinker {

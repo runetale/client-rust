@@ -1047,6 +1047,11 @@ pub struct Node {
     /// is asleep and therefore unable to answer for itself.
     #[prost(string, repeated, tag = "22")]
     pub wol_macs: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// user_display_name is the display name of the user who owns this node.
+    /// Empty for a node without a user. displayName above carries the node's
+    /// own name, not the user's.
+    #[prost(string, tag = "23")]
+    pub user_display_name: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ComposeNodeResponse {

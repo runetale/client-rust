@@ -1136,6 +1136,14 @@ pub struct HostMeta {
     /// the client predates auto-update, which the server treats as unsupported.
     #[prost(message, optional, tag = "13")]
     pub auto_update: ::core::option::Option<AutoUpdateStatus>,
+    /// app_linker_wonder_ranges reports that this client uses the wonder
+    /// ranges the server assigns in AppLinker.wonder_prefix4 and
+    /// wonder_prefix6, and, when it serves an AppLinker, takes traffic to them.
+    /// The server sends those ranges for an AppLinker only while the node
+    /// serving it reports this, so that a client never sends traffic to a
+    /// range its AppLinker node does not know.
+    #[prost(bool, tag = "14")]
+    pub app_linker_wonder_ranges: bool,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AutoUpdateStatus {
@@ -1382,6 +1390,16 @@ pub struct AppLinker {
     /// AppLinker's domains to this port on the AppLinker node's VPN IP.
     #[prost(uint32, tag = "5")]
     pub peer_api_port: u32,
+    /// wonder_prefix4 and wonder_prefix6 are the wonder ranges of this
+    /// AppLinker, as CIDRs (e.g. 198.18.3.0/24 and 2001:2::300/120). Clients
+    /// answer DNS queries for its domains with addresses in them, and the node
+    /// in node_id takes traffic to them. Each AppLinker keeps its ranges
+    /// whichever node serves it. Empty means clients choose the ranges
+    /// themselves, as clients without app_linker_wonder_ranges always do.
+    #[prost(string, tag = "6")]
+    pub wonder_prefix4: ::prost::alloc::string::String,
+    #[prost(string, tag = "7")]
+    pub wonder_prefix6: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Resolver {

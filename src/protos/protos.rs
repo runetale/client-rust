@@ -1136,14 +1136,6 @@ pub struct HostMeta {
     /// the client predates auto-update, which the server treats as unsupported.
     #[prost(message, optional, tag = "13")]
     pub auto_update: ::core::option::Option<AutoUpdateStatus>,
-    /// app_linker_wonder_ranges reports that this client uses the wonder
-    /// ranges the server assigns in AppLinker.wonder_prefix4 and
-    /// wonder_prefix6, and, when it serves an AppLinker, takes traffic to them.
-    /// The server sends those ranges for an AppLinker only while the node
-    /// serving it reports this, so that a client never sends traffic to a
-    /// range its AppLinker node does not know.
-    #[prost(bool, tag = "14")]
-    pub app_linker_wonder_ranges: bool,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AutoUpdateStatus {
@@ -1395,7 +1387,9 @@ pub struct AppLinker {
     /// answer DNS queries for its domains with addresses in them, and the node
     /// in node_id takes traffic to them. Each AppLinker keeps its ranges
     /// whichever node serves it. Empty means clients choose the ranges
-    /// themselves, as clients without app_linker_wonder_ranges always do.
+    /// themselves, as older clients always do. A node serving the AppLinker
+    /// with an older client refuses addresses in these ranges, and clients
+    /// then fall back to choosing the range themselves.
     #[prost(string, tag = "6")]
     pub wonder_prefix4: ::prost::alloc::string::String,
     #[prost(string, tag = "7")]

@@ -1382,6 +1382,18 @@ pub struct AppLinker {
     /// AppLinker's domains to this port on the AppLinker node's VPN IP.
     #[prost(uint32, tag = "5")]
     pub peer_api_port: u32,
+    /// wonder_prefix4 and wonder_prefix6 are the wonder ranges of this
+    /// AppLinker, as CIDRs (e.g. 198.18.3.0/24 and 2001:2::300/120). Clients
+    /// answer DNS queries for its domains with addresses in them, and the node
+    /// in node_id takes traffic to them. Each AppLinker keeps its ranges
+    /// whichever node serves it. Empty means clients choose the ranges
+    /// themselves, as older clients always do. A node serving the AppLinker
+    /// with an older client refuses addresses in these ranges, and clients
+    /// then fall back to choosing the range themselves.
+    #[prost(string, tag = "6")]
+    pub wonder_prefix4: ::prost::alloc::string::String,
+    #[prost(string, tag = "7")]
+    pub wonder_prefix6: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Resolver {

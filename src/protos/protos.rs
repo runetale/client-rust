@@ -1313,6 +1313,31 @@ pub struct NetworkMapResponse {
     /// included, so a node never receives header values meant for others.
     #[prost(message, repeated, tag = "28")]
     pub http_services: ::prost::alloc::vec::Vec<HttpService>,
+    /// exit_nodes are the ExitNode entries this node may route through. An
+    /// entry can have several member nodes, of which the server picks one to
+    /// carry its traffic; only that node is given the exit routes. A client
+    /// using an entry routes through its node_id, and follows the entry when
+    /// the server picks another member.
+    #[prost(message, repeated, tag = "29")]
+    pub exit_nodes: ::prost::alloc::vec::Vec<ExitNode>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ExitNode {
+    /// id identifies the entry. It stays the same whichever member serves it.
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    /// name is the entry's name as shown to users.
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+    /// node_id is the member that carries the entry's traffic now. Zero
+    /// means none can.
+    #[prost(uint64, tag = "3")]
+    pub node_id: u64,
+    /// member_node_ids are every node that may serve the entry, in the order
+    /// they take over. A client that chose one of them by node ID follows
+    /// the entry.
+    #[prost(uint64, repeated, tag = "4")]
+    pub member_node_ids: ::prost::alloc::vec::Vec<u64>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CerfMap {

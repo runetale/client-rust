@@ -1052,6 +1052,11 @@ pub struct Node {
     /// own name, not the user's.
     #[prost(string, tag = "23")]
     pub user_display_name: ::prost::alloc::string::String,
+    /// noroshi_relay marks a peer as a noroshi relay: a server-run node that
+    /// forwards connections from the internet to nodes publishing a port.
+    /// A node accepts noroshi connections only from such peers.
+    #[prost(bool, tag = "24")]
+    pub noroshi_relay: bool,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ComposeNodeResponse {
@@ -1136,6 +1141,10 @@ pub struct HostMeta {
     /// the client predates auto-update, which the server treats as unsupported.
     #[prost(message, optional, tag = "13")]
     pub auto_update: ::core::option::Option<AutoUpdateStatus>,
+    /// noroshi_ports are the ports this node is publishing to the internet
+    /// through noroshi. The server publishes only those it allows the node.
+    #[prost(uint32, repeated, tag = "14")]
+    pub noroshi_ports: ::prost::alloc::vec::Vec<u32>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AutoUpdateStatus {
@@ -1320,6 +1329,63 @@ pub struct NetworkMapResponse {
     /// the server picks another member.
     #[prost(message, repeated, tag = "29")]
     pub exit_nodes: ::prost::alloc::vec::Vec<ExitNode>,
+    /// noroshi is this node's noroshi state: whether it may publish ports to
+    /// the internet and its public name, or, for a noroshi relay, where each
+    /// published name leads. Unset means noroshi is not available.
+    #[prost(message, optional, tag = "30")]
+    pub noroshi: ::core::option::Option<Noroshi>,
+}
+/// Noroshi carries what a node needs to publish ports to the internet, or
+/// what a noroshi relay needs to forward connections to them.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Noroshi {
+    /// allowed_ports are the ports this node may publish. Empty means it may
+    /// not publish any.
+    #[prost(uint32, repeated, tag = "1")]
+    pub allowed_ports: ::prost::alloc::vec::Vec<u32>,
+    /// public_name is the name the node is published under, e.g.
+    /// "web.rune1234abcd.rune.host", without a trailing dot.
+    #[prost(string, tag = "2")]
+    pub public_name: ::prost::alloc::string::String,
+    /// targets are set only for a noroshi relay: every published name and
+    /// port, across all networks, with the node that serves it.
+    #[prost(message, repeated, tag = "3")]
+    pub targets: ::prost::alloc::vec::Vec<NoroshiTarget>,
+}
+/// NoroshiTarget is one published name and port as a noroshi relay sees it.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct NoroshiTarget {
+    /// name is the public name, without a trailing dot.
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    /// port is the public port.
+    #[prost(uint32, tag = "2")]
+    pub port: u32,
+    /// node_id is the node serving it. It is also among the relay's peers.
+    #[prost(uint64, tag = "3")]
+    pub node_id: u64,
+    /// addresses are the node's addresses, as in Node.addresses. Addresses
+    /// are unique only within a network, so the relay tells nodes apart by
+    /// node_id, not by address.
+    #[prost(string, repeated, tag = "4")]
+    pub addresses: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// peer_api_port is the node's peer service port, where the relay sends
+    /// each connection.
+    #[prost(uint32, tag = "5")]
+    pub peer_api_port: u32,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetDnsChallengeRequest {
+    /// name is the name the certificate is for, without a trailing dot. It
+    /// must be the calling node's own name.
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    /// value is the TXT record value. Empty removes the record.
+    #[prost(string, tag = "2")]
+    pub value: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetDnsChallengeResponse {
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ExitNode {
